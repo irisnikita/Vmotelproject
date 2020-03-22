@@ -14,7 +14,7 @@ const userRoute = (app) => {
     userRouters.post('/login', AuthController.login);
     userRouters.post('/refresh-token', AuthController.refreshToken);
 
-    userRouters.post('/send-mail', EmailController.sendMaill);
+    userRouters.post('/send-mail', EmailController.sendMail);
 
     userRouters.post('/register', AuthController.register);
 
