@@ -1,0 +1,18 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+package-lock.json
+.bit/*
+bit.json
+.bitmap
+.idea/*
+
+jsconfig.json
+WSConfig.js
+yarn.lock
+
+storybook-static/
+docs/package-lock.json
+docs/.idea/
+.vscode
