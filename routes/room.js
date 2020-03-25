@@ -18,6 +18,7 @@ const roomRoute = (app) => {
                 console.log(err)
             } else {
                 res.send(rooms);
+                console.log(rooms)
             }
         })
     })
