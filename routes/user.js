@@ -8,6 +8,9 @@ const FriendController = require('../controllers/FriendController');
 const userModel = require('../model/user');
 const bcrypt = require('bcrypt');
 
+// Utils
+const appConfig = require('../constant');
+
 // Model
 let room = require('../model/room.model');
 
@@ -59,6 +62,27 @@ const userRoute = (app) => {
 
     userRouters.post('/send-mail', EmailController.sendMail);
 
+    userRouters.get('/get-user/:id?', (req, res) => {
+        const {id} = req.params;
+        if(!id) {
+            userModel.getAll((err, rows, fields) => {
+                if(!err) {
+                    res.send({
+                        message: 'Get Users success',
+                        status: res.statusCode,
+                        data: {
+                            users: rows
+                        }
+                    })
+                }
+                else {
+                    res.send({
+                        message: 'Can\'t get users'
+                    })
+                }
+            })
+        }
+    })
 
     userRouters.use(AuthMiddleWare.isAuth);
 

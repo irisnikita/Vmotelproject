@@ -26,7 +26,7 @@ let isAuth = async(req, res, next) => {
             next();
 
         } catch (error) {
-            debug("Error while verify token:", error);
+            
             return res.status(401).json({
                 message: 'Unauthorized.'
             })

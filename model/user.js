@@ -13,6 +13,10 @@ const User = {
 
         return connection.query(query, [body.userName, hashPass, body.fullName, body.dateBirth, body.address, body.role], callback)
         
+    },
+    getAll: (callback) => {
+        let query = 'SELECT * FROM USERS ';
+        return connection.query(query, callback);
     }
 }
 
