@@ -2,10 +2,10 @@
 const express = require('express'); 
 const userRouters = express.Router();
 const AuthMiddleWare = require('../Middleware/AuthMiddleware');
-const AuthController = require('../controllers/AuthController');
 const EmailController = require('../controllers/EmailController');
 const FriendController = require('../controllers/FriendController');
 const userModel = require('../model/user');
+const jwtHelper = require('../helpers/jwt.helper');
 const bcrypt = require('bcrypt');
 
 // Utils
@@ -16,19 +16,33 @@ let room = require('../model/room.model');
 
 
 const userRoute = (app) => {
-    userRouters.post('/login', AuthController.login);
-    userRouters.post('/refresh-token', AuthController.refreshToken);
 
-    userRouters.post('/login2', (req, res) => {
+    userRouters.post('/login', (req, res) => {
         const {userName, pass} = req.body;
 
         if(userName && pass) {
-            userModel.login(req, (err, rows, fields) => {
+            userModel.login(req, async (err, rows, fields) => {
+                const user = rows[0];
+
                 if(!err) {
                     if(rows.length > 0) {
 
                         if(bcrypt.compareSync(pass,rows[0].pass)) {
-                            res.send(rows[0])
+
+                          const accessToken = await jwtHelper.generateToken(rows[0], appConfig.ACCESS_TOKEN_SECERET, appConfig.ACCESS_TOKEN_LIFE)
+                            res.send({
+                                status: res.statusCode,
+                                message: "Login success",
+                                data: {
+                                    token: accessToken,
+                                    user: {
+                                        id: user.id,
+                                        userName: user.userName,
+                                        fullName: user.fullName,
+                                        role: user.role
+                                    }
+                                }
+                            })
                         }
                         else {
                             res.send({

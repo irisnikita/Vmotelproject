@@ -15,8 +15,8 @@ let generateToken = (user, secretSignature, tokenLife) => {
         // Define user 
         const userData = {
             id: user.id,
-            name: user.name,
-            email: user.email
+            userName: user.userName,
+            fullName: user.fullName
         }
         // create token
         jwt.sign(
