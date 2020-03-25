@@ -76,6 +76,8 @@ const userRoute = (app) => {
 
     userRouters.post('/send-mail', EmailController.sendMail);
 
+    userRouters.use(AuthMiddleWare.isAuth);
+
     userRouters.get('/get-user/:id?', (req, res) => {
         const {id} = req.params;
         if(!id) {
@@ -97,8 +99,6 @@ const userRoute = (app) => {
             })
         }
     })
-
-    userRouters.use(AuthMiddleWare.isAuth);
 
     userRouters.get('/friends', FriendController.friendLists);
 
