@@ -1,5 +1,5 @@
 // router
-const express = require('express'); 
+const express = require('express');
 const userRouters = express.Router();
 const AuthMiddleWare = require('../Middleware/AuthMiddleware');
 const EmailController = require('../controllers/EmailController');
@@ -18,18 +18,18 @@ let room = require('../model/room.model');
 const userRoute = (app) => {
 
     userRouters.post('/login', (req, res) => {
-        const {userName, pass} = req.body;
+        const { userName, pass } = req.body;
 
-        if(userName && pass) {
+        if (userName && pass) {
             userModel.login(req, async (err, rows, fields) => {
                 const user = rows[0];
 
-                if(!err) {
-                    if(rows.length > 0) {
+                if (!err) {
+                    if (rows.length > 0) {
 
-                        if(bcrypt.compareSync(pass,rows[0].pass)) {
+                        if (bcrypt.compareSync(pass, rows[0].pass)) {
 
-                          const accessToken = await jwtHelper.generateToken(rows[0], appConfig.ACCESS_TOKEN_SECERET, appConfig.ACCESS_TOKEN_LIFE)
+                            const accessToken = await jwtHelper.generateToken(rows[0], appConfig.ACCESS_TOKEN_SECERET, appConfig.ACCESS_TOKEN_LIFE)
                             res.send({
                                 status: res.statusCode,
                                 message: "Login success",
@@ -63,13 +63,21 @@ const userRoute = (app) => {
     userRouters.post('/register', (req, res) => {
 
         userModel.register(req, (err, rows, fields) => {
-            if(!err) {
-                if(rows) {
-                    res.send(rows)
+            if (!err) {
+                if (rows) {
+                    res.send({
+                        status: res.statusCode,
+                        message: 'Register Success',
+                        data: {
+                            status: 1
+                        }
+                    })
                 }
-            } else {
-                res.send('Failed to register User')
-                console.log(err)
+            }
+            else {
+                res.send({
+                    message: err
+                })
             }
         })
     });
@@ -79,10 +87,10 @@ const userRoute = (app) => {
     userRouters.use(AuthMiddleWare.isAuth);
 
     userRouters.get('/get-user/:id?', (req, res) => {
-        const {id} = req.params;
-        if(!id) {
+        const { id } = req.params;
+        if (!id) {
             userModel.getAll((err, rows, fields) => {
-                if(!err) {
+                if (!err) {
                     res.send({
                         message: 'Get Users success',
                         status: res.statusCode,
