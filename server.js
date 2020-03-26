@@ -13,24 +13,13 @@ require('dotenv').config();
 let room = require('./model/room.model');
 
 // Define server
-const PORT = process.env.PORT || 8000; 
+const PORT = process.env.PORT || 8000;
 const app = express();
 const server = http.createServer(app);
 
 
 app.use(cors());
 app.use(bodyParser.json());
-
-
-// const url = "mongodb+srv://nltruongvi:TjmWjm824594@cluster0-vzakd.mongodb.net/motelproject?retryWrites=true&w=majority";
-
-// mongoose.connect(url,{useUnifiedTopology: true,useNewUrlParser: true,});
-
-// const connection = mongoose.connection;
-
-// connection.once('open', function() {
-//     console.log("Mongodb is connection successfully")
-// })
 
 app.get('/', (req, res) => {
     res.send('Hello mọi người')

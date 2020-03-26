@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import {Drawer, Form, Button, Col, Row, Input, Tabs, Checkbox, Typography, message} from 'antd';
 import {connect} from 'react-redux';
 
+// Components
+import Register from 'Layouts/containers/DefaultHeader/components/Register';
+
 // Icons
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
 
@@ -31,7 +34,8 @@ class DrawerUser extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isShowLoading: false
+            isShowLoading: false,
+            activeKeyTab: '1'
         };
     }
 
@@ -53,14 +57,14 @@ class DrawerUser extends Component {
 
     onFinishLogin =  (value) => {
         try {
-            const {email, pass} = value;
+            const {userName, pass} = value;
 
             this.setState({
                 isShowLoading: true
             });
 
             let createLogin =  userService.create({
-                email,
+                userName,
                 pass
             });
 
@@ -92,6 +96,20 @@ class DrawerUser extends Component {
         }
     }
 
+    callbackRegister = () => {
+        this.setState({
+            activeKeyTab: '1'
+        });
+    }
+
+    onChangeTabs = (value) => {
+        if (value) {
+            this.setState({
+                activeKeyTab: value
+            });
+        }
+    }
+
     componentWillUnmount() {
         try {
             this._isMounted = false;
@@ -102,7 +120,7 @@ class DrawerUser extends Component {
 
     render() {
         const {isOpen = false} = this.props;
-        const {isShowLoading} = this.state;
+        const {isShowLoading, activeKeyTab} = this.state;
 
         return (
             <Drawer
@@ -111,19 +129,20 @@ class DrawerUser extends Component {
                 onClose={this.onClose}
                 visible={isOpen}
             >
-                <Tabs defaultActiveKey='1' onChange={this.onChangeTabs}>
+                <Tabs 
+                    activeKey={activeKeyTab}
+                    onChange={this.onChangeTabs}>
                     <TabPane tab='Đăng nhập' key='1'> 
                         <Form onFinish={this.onFinishLogin}>
                             <Form.Item
                                 style={{marginBottom: 5}}
-                                label={<div style={{fontWeight: 600}}>Email</div>}
-                                name="email"
+                                label={<div style={{fontWeight: 600}}>Tên đăng nhập</div>}
+                                name="userName"
                                 rules={[
-                                    {required: true, message: 'Xin vui lòng nhập email'},
-                                    {type: 'email', message: 'Email không hợp lệ vui lòng nhập lại'}
+                                    {required: true, message: 'Xin vui lòng nhập Tên đăng nhập'}
                                 ]}
                             >
-                                <Input style={{width: 250}} prefix={<UserOutlined />} placeholder='Nhập địa chỉ email' />
+                                <Input style={{width: 250}} prefix={<UserOutlined />} placeholder='Nhập tên đăng nhập' />
                             </Form.Item>
                             <Form.Item
                                 label={<div style={{fontWeight: 600}}>Mật khẩu</div>}
@@ -154,7 +173,11 @@ class DrawerUser extends Component {
                             </Form.Item>
                         </Form>
                     </TabPane>
-                    <TabPane tab='Đăng ký' key='2' />
+                    <TabPane tab='Đăng ký' key='2'>
+                        <Register 
+                            callback={this.callbackRegister}
+                        />
+                    </TabPane>
                 </Tabs>
             </Drawer>
         );
