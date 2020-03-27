@@ -1,21 +1,30 @@
 // Libraries
 import React, {Component} from 'react';
-import ReactCSSTransitionGroup from 'react-transition-group';
+import ScrollAnimation from 'react-animate-on-scroll';
 
 // Icon
 import {DingtalkOutlined, FieldTimeOutlined, PoundOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 
 class Introduce extends Component {
+    isMounted = false
+
     state = {
-        isLoadingHome: false
+        isLoadingHome: true
     }
 
     componentDidMount() {
+        this.isMounted = true;
         setTimeout(() => {
-            this.setState({
-                isLoadingHome: false
-            });
+            if (this.isMounted === true) {
+                this.setState({
+                    isLoadingHome: false
+                });
+            }
         }, 3000);
+    }
+
+    componentWillUnmount() {
+        this.isMounted = false;
     }
 
     render() {
@@ -38,7 +47,8 @@ class Introduce extends Component {
                 <> 
                     <main className='main-introduce' style={
                         !isLoadingHome ? {
-                            opacity: 1
+                            opacity: 1,
+                            display: 'block'
                         } : null 
                     }>
                         <div className="slider-area ">
@@ -47,7 +57,8 @@ class Introduce extends Component {
                                     <div className="container">
                                         <div className="row d-flex align-items-center">
                                             <div className="col-lg-7 col-md-9 ">
-                                                <div className="hero__caption">
+                                               
+                                                <div className="hero__caption fade-in">
                                                     <h1 data-animation="fadeInLeft" data-delay=".4s">Vmotel<br /> Mangager tool
                                                     </h1>
                                                     <p data-animation="fadeInLeft" data-delay=".6s">
@@ -57,11 +68,11 @@ class Introduce extends Component {
                                                     </p>
                                                     {/* Hero-btn */}
                                                     <div className="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
-                                                        <a href="industries.html" className="btn hero-btn">Dùng thử ngay</a>
+                                                        <a href="industries.html" className="btn hero-btn animated infinite bounce delay-2s">Dùng thử ngay</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-lg-5">
+                                            <div className="col-lg-5 fade-in-right" >
                                                 <div className="hero__img d-none d-lg-block" data-animation="fadeInRight" data-delay="1s">
                                                     <img src="/src/assets/images/hero/hero_right.png"  />
                                                 </div>
@@ -74,49 +85,54 @@ class Introduce extends Component {
                         <div className="what-we-do we-padding">
                             <div className="container">
                                 {/* Section-tittle */}
-                                <div className="row d-flex justify-content-center">
-                                    <div className="col-lg-8">
-                                        <div className="section-tittle text-center">
-                                            <h2>Are you dealing in Motel, Apartments?</h2>
-                                        </div>
-                                    </div>
-                                    <h5>Cho thuê nhà trọ, căn hộ là loại hình kinh doanh khá hấp dẫn vì có tiềm năng lớn, nhu cầu cao, doanh thu ổn định và an toàn. Tuy nhiên, lĩnh vực kinh doanh này cũng có khá nhiều khó khăn khiến không ít chủ trọ, chủ căn hộ phải đối mặt với nhiều rủi ro về tài chính cũng như hiệu quả quản lý.</h5>
-                                </div>
-                                <div className="row">
-                                    <div className="col-lg-4 col-md-6" style={{cursor: 'pointer'}}>
-                                        <div className="single-do text-center mb-30">
-                                            <div className="do-icon">
-                                                <FieldTimeOutlined />
-                                            </div>
-                                            <div className="do-caption">
-                                                <h4>Thời gian</h4>
-                                                <p>Bạn tốn nhiều thời gian cho việc giám sát, quản lý cơ sở, khách thuê, chi phí.</p>
+                                <ScrollAnimation animateIn="bounceInRight">
+                                    <div className="row d-flex justify-content-center ">
+                                        <div className="col-lg-8">
+                                            <div className="section-tittle text-center">
+                                                <h2>Are you dealing in Motel, Apartments?</h2>
                                             </div>
                                         </div>
+                                        <h5>Cho thuê nhà trọ, căn hộ là loại hình kinh doanh khá hấp dẫn vì có tiềm năng lớn, nhu cầu cao, doanh thu ổn định và an toàn. Tuy nhiên, lĩnh vực kinh doanh này cũng có khá nhiều khó khăn khiến không ít chủ trọ, chủ căn hộ phải đối mặt với nhiều rủi ro về tài chính cũng như hiệu quả quản lý.</h5>
                                     </div>
-                                    <div className="col-lg-4 col-md-6"  style={{cursor: 'pointer'}}>
-                                        <div className="single-do active text-center mb-30">
-                                            <div className="do-icon">
-                                                <PoundOutlined />
+                                </ScrollAnimation>
+                                <ScrollAnimation animateIn='fadeInLeft' duration={1}>
+                                    <div className="row">
+                                        <div className="col-lg-4 col-md-6" style={{cursor: 'pointer'}}>
+                                            <div className="single-do text-center mb-30">
+                                                <div className="do-icon">
+                                                    <FieldTimeOutlined />
+                                                </div>
+                                                <div className="do-caption">
+                                                    <h4>Thời gian</h4>
+                                                    <p>Bạn tốn nhiều thời gian cho việc giám sát, quản lý cơ sở, khách thuê, chi phí.</p>
+                                                </div>
                                             </div>
-                                            <div className="do-caption">
-                                                <h4>Chi phí</h4>
-                                                <p>Bạn đau đầu vì có quá nhiều chi phí phát sinh trong quá trình kinh doanh.</p>
+                                        </div>
+                                        <div className="col-lg-4 col-md-6"  style={{cursor: 'pointer'}}>
+                                            <div className="single-do active text-center mb-30">
+                                                <div className="do-icon">
+                                                    <PoundOutlined />
+                                                </div>
+                                                <div className="do-caption">
+                                                    <h4>Chi phí</h4>
+                                                    <p>Bạn đau đầu vì có quá nhiều chi phí phát sinh trong quá trình kinh doanh.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-4 col-md-6"  style={{cursor: 'pointer'}}>
+                                            <div className="single-do text-center mb-30">
+                                                <div className="do-icon">
+                                                    <UsergroupAddOutlined />
+                                                </div>
+                                                <div className="do-caption">
+                                                    <h4>Công tác Quản lý</h4>
+                                                    <p>Bạn đau đầu khi suốt ngày phải đi xử lý sự cố, hợp đồng, các thủ tục pháp lý, hóa đơn.!</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6"  style={{cursor: 'pointer'}}>
-                                        <div className="single-do text-center mb-30">
-                                            <div className="do-icon">
-                                                <UsergroupAddOutlined />
-                                            </div>
-                                            <div className="do-caption">
-                                                <h4>Công tác Quản lý</h4>
-                                                <p>Bạn đau đầu khi suốt ngày phải đi xử lý sự cố, hợp đồng, các thủ tục pháp lý, hóa đơn.!</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            
+                                </ScrollAnimation>
                             </div>
                         </div>
                         {/* We Create Start */}
@@ -124,19 +140,25 @@ class Introduce extends Component {
                             <div className="container">
                                 <div className="row d-flex align-items-end">
                                     <div className="col-lg-6 col-md-12">
-                                        <div className="we-create-img">
-                                            <img src="/src/assets/images//service/we-create.png"  />
-                                        </div>
+                                        <ScrollAnimation animateIn='zoomInLeft'>
+                                            <div className="we-create-img">
+                                                <img src="/src/assets/images//service/we-create.png"  />
+                                            </div>
+                                        </ScrollAnimation>
                                     </div>
-                                    <div className="col-lg-6 col-md-12">
-                                        <div className="we-create-cap">
-                                            <h3>We Create a Steps to Build a Successful Digital Product</h3>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                    <div className="col-lg-6 col-md-12 ">
+                                            
+                                        <ScrollAnimation animateIn='bounceInUp' delay={500}>
+                                            <div className="we-create-cap">
+                                                <h3>We Create a Steps to Build a Successful Digital Product</h3>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
               ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo
               viverra maecenas accumsan lacus vel facilisis orem ipsum dolor sit amet, consectetur
               adipiscing.</p>
-                                            <a href="#" className="btn">Contact Us</a>
-                                        </div>
+                                                <a href="#" className="btn">Contact Us</a>
+                                            </div>
+                                            
+                                        </ScrollAnimation>
                                     </div>
                                 </div>
                             </div>

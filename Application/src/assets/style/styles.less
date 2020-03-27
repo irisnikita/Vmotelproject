@@ -97,6 +97,10 @@
   .ml-10;
 }
 
+.default-slider {
+  box-shadow: 0px 0px 2px @color-grey;
+}
+
 .slider-title {
   padding: 17px;
   font-size: 20px;
@@ -149,10 +153,30 @@
 .main-introduce {
   opacity: 0;
   transition: all 2s;
+  display: none;
 }
 
 .wrapper-all {
   height: 100vh;
   overflow: hidden;
   overflow: auto;
+}
+
+.fade-in {
+  position: relative;
+  animation: keyframe1 2s ;
+}
+
+.fade-in-right {
+  position: relative;
+  animation: keyframe2 2s;
+}
+
+@keyframes keyframe1 {
+  from {left: -500px;}
+  to {left: 0px;}
+}
+@keyframes keyframe2 {
+  from {right: -500px;}
+  to {right: 0px;}
 }

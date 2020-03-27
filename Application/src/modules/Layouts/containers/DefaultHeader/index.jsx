@@ -1,7 +1,8 @@
 // Libraries
 import React, {Component} from 'react';
-import {Layout, Avatar, Typography, Badge, Divider, Button} from 'antd';
+import {Layout, Typography, Button, Avatar} from 'antd';
 import {connect} from 'react-redux';
+import _ from 'lodash';
 
 // Icon
 import {DingtalkOutlined, UserOutlined, MessageOutlined} from '@ant-design/icons';
@@ -52,6 +53,7 @@ class DefaultHeader extends Component {
 
     render() {
         const {isOpenDrawer = false, isHideHeader = false} = this.state;
+        const {userLogin} = this.props;
 
         return (
             <Layout.Header 
@@ -70,10 +72,21 @@ class DefaultHeader extends Component {
                    
                 </div>
                 <div className='flex-row'>
-                    <Button type='dashed' className='flex-row' onClick={this.onClickLoggin}>
-                        Sử dụng
-                        <UserOutlined />
-                    </Button> &nbsp;
+                    <Button type='ghost' shape="round" size='large'>Trang chủ</Button> &nbsp;
+                    <Button type='ghost' shape="round" size='large'>Thông tin</Button> &nbsp;
+                    <Button type='ghost' shape="round" size='large'>Bảng giá</Button> &nbsp;
+                    <Button type='ghost' shape="round" size='large'>Giới thiệu</Button> &nbsp;
+                    {
+                        !_.isEmpty(userLogin) ? <div className='flex-row'>
+                            <div style={{fontSize: 15, fontWeight: 600}}>
+                                {userLogin.userName}
+                            </div>
+                            <Avatar  size='large' style={{marginLeft: 10, cursor: 'pointer'}} src='https://nguoinoitieng.tv/images/nnt/96/0/bber.jpg' />
+                        </div> : 
+                            <Button type='primary' shape="round" className='flex-row' size='large' onClick={this.onClickLoggin}>
+                         Dùng Thử
+                            </Button>
+                    }
                 </div>
                 <DrawerUser
                     isOpen={isOpenDrawer}
@@ -86,7 +99,8 @@ class DefaultHeader extends Component {
 
 function mapStateToProps (state) {
     return {
-        path: state.Layouts.layoutReducer.path
+        path: state.Layouts.layoutReducer.path,
+        userLogin: state.Layouts.layoutReducer.userLogin
     };
 }
 

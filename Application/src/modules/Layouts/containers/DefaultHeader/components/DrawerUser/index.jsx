@@ -73,7 +73,7 @@ class DrawerUser extends Component {
                     if (res.data && res.data.data) {
                         const {data} = res.data;
 
-                        document.cookie = JSON.stringify(data);
+                        localStorage.setItem('userInfo', JSON.stringify(data));
 
                         this.props.layout({
                             type: 'login',
@@ -124,6 +124,7 @@ class DrawerUser extends Component {
 
         return (
             <Drawer
+                destroyOnClose={true}
                 title='Xin chào quý khách !'
                 width={300}
                 onClose={this.onClose}

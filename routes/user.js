@@ -108,6 +108,16 @@ const userRoute = (app) => {
         }
     })
 
+    userRouters.post('/validate', (req, res) => {
+        res.send({
+            status: res.statusCode,
+            message: 'Validate success',
+            data: {
+                status: 1
+            }
+        })
+    })
+
     userRouters.get('/friends', FriendController.friendLists);
 
     app.use('/user', userRouters);

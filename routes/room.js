@@ -1,5 +1,5 @@
 // router
-const express = require('express'); 
+const express = require('express');
 const roomRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 
@@ -14,7 +14,7 @@ const roomRoute = (app) => {
 
     roomRouters.route('/').get((req, res) => {
         room.find((err, rooms) => {
-            if(err) {
+            if (err) {
                 console.log(err)
             } else {
                 res.send(rooms);

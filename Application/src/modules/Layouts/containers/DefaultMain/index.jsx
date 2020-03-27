@@ -7,7 +7,6 @@ import {Layout} from 'antd';
 import routes from 'Src/routes';
 
 // Components
-import DefaultHeader from 'Layouts/containers/DefaultHeader';
 import DefaultSlider from 'Layouts/containers/DefaultSlider';
 
 const {Content} = Layout;

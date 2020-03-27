@@ -38,7 +38,7 @@ class DefaultSlider extends Component {
         const {menuSelected} = this.state;
 
         return (
-            <Layout.Sider >
+            <Layout.Sider className='default-slider' >
                 <Menu
                     onSelect={this.onSelectMenuItem}
                     selectedKeys={menuSelected}

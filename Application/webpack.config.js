@@ -117,7 +117,7 @@ module.exports = {
     devServer: {
         hot: true,
         historyApiFallback: true,
-        port: 8081
+        port: 3000
     },
     plugins: [
         new HTMLWebpackPlugin({

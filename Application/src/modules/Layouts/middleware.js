@@ -27,8 +27,13 @@ export function* layout({payload}) {
         case 'login':
             yield put(userLogin({
                 userLogin: value
-            }))
-    
+            }));
+            break;
+        case 'validate':
+            yield put(userLogin({
+                userLogin: value
+            }));
+            break;
         default:
             break;
     }
