@@ -1,6 +1,6 @@
 // Libraries
 import React, {Component} from 'react';
-import {Layout, Avatar, Typography, Badge, Divider} from 'antd';
+import {Layout, Avatar, Typography, Badge, Divider, Button} from 'antd';
 import {connect} from 'react-redux';
 
 // Icon
@@ -15,11 +15,21 @@ class DefaultHeader extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOpenDrawer: false
+            isOpenDrawer: false,
+            isHideHeader: false
         };
     }
 
-    onClickAvatar = () => {
+    componentDidMount() {
+        window.addEventListener('scroll', () => {
+            this.setState({
+                isHideHeader: window.scrollY > 200 ? true : false
+            });
+            
+        });
+    }
+
+    onClickLoggin = () => {
         try {
             this.setState({
                 isOpenDrawer: true
@@ -41,42 +51,29 @@ class DefaultHeader extends Component {
     }
 
     render() {
-        const {path = ''} = this.props;
-        const {isOpenDrawer = false} = this.state;
+        const {isOpenDrawer = false, isHideHeader = false} = this.state;
 
         return (
             <Layout.Header 
                 className='Default-header'
+                style={{boxShadow: isHideHeader ? '0px 2px 3px rgb(212, 212, 212)' : null}}
             >
                 <div className='flex-row '>
                     <DingtalkOutlined 
                         style={{
                             fontSize: 40,
-                            color: '#fff',
+                            color: 'black',
                             paddingRight: '5px',
                             borderRight: '3px solid #fff'
                         }} /> 
-                    <div className='title-header'>Công cụ quản lý phòng trọ </div>
+                    <div className='title-header'>Vmotel </div>
                    
                 </div>
-                <div style={{
-                    fontSize: 17,
-                    fontWeight: 500,
-                    color: '#fff'
-                }}
-                >
-                    {path}
-                </div>
                 <div className='flex-row'>
-                    <div className='flex-row mr-10 shop-bag' >
-                        <Text className='mr-5' style={{color: '#fff',fontSize: 15}}>Tin nhắn</Text>
-                        <Badge count={1} >
-                            <MessageOutlined style={{fontSize: 25, color: '#fff'}} />
-                        </Badge>
-                    </div>
-                    <Divider type='vertical' />
-                    <div className='name-user'>Truong vi</div>
-                    <Avatar onClick={this.onClickAvatar} style={{cursor: 'pointer'}} size="default" icon={<UserOutlined />} />
+                    <Button type='dashed' className='flex-row' onClick={this.onClickLoggin}>
+                        Sử dụng
+                        <UserOutlined />
+                    </Button> &nbsp;
                 </div>
                 <DrawerUser
                     isOpen={isOpenDrawer}

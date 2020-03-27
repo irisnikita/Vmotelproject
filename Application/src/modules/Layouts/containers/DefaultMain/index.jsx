@@ -17,7 +17,6 @@ class DefaultMain extends Component {
         return (
             <>
                 <Layout className='layout'>
-                    <DefaultHeader />
                     <Layout>
                         <DefaultSlider />
                         <Layout style={{padding: 10}}>
