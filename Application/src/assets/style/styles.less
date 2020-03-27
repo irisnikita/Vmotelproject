@@ -3,6 +3,7 @@
 @color-blue: #53caa1;
 @color-violet: #dd22c7;
 @color-orange: #dd7322;
+@color-grey: rgb(138, 138, 138);
 
 // Padding
 
@@ -26,24 +27,29 @@
 
 .layout {
   background-color: #fff;
-  height: 100vh;
-  .Default-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 40px;
-    padding: 0px 5px;
-    background-color: @color-black;
-    margin: 5px 5px;
-    .title-header {
-      padding: 0px 10px;
-      font-size: 20px;
-      color: #fff;
-      font-weight: 600;
-    }
-  }
+  height: 90vh;
+ 
   .right-content {
     background-color: #fff;
+  }
+}
+
+.Default-header {
+  padding: 10px;
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  transition: all 500ms;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background-color: #fff;
+  .title-header {
+    padding: 0px 5px;
+    font-size: 30px;
+    color: rgb(138, 138, 138);
+    font-weight: 600;
   }
 }
 
@@ -51,13 +57,13 @@
   padding: 10px;
   .site-card-wrapper {
     .card-info {
-      &.violet {
+      &.violet-my {
         &:hover {
           box-shadow: 0px 0px 5px gray;
           color: @color-violet;
         }
       }
-      &.orange {
+      &.orange-my {
         &:hover {
           box-shadow: 0px 0px 5px gray;
           color: @color-orange;
@@ -84,7 +90,7 @@
 }
 
 .name-user {
-  color: #fff;
+  color: @color-grey;
   font-weight: 700;
   font-size: 15px;
   .mr-10;
@@ -121,6 +127,7 @@
 .scroll-bar {
   &::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
     border-radius: 5px;
   }
   &::-webkit-scrollbar-track {
@@ -137,4 +144,15 @@
     width: 0px;
     border-radius: 5px;
   }
+}
+
+.main-introduce {
+  opacity: 0;
+  transition: all 2s;
+}
+
+.wrapper-all {
+  height: 100vh;
+  overflow: hidden;
+  overflow: auto;
 }

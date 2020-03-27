@@ -43,7 +43,7 @@ class Home extends Component {
                             </div>
                         </Col>
                         <Col xs={{span: 24}} md={{span: 8}}>
-                            <div className='card-info violet flex-row'>
+                            <div className='card-info violet-my flex-row'>
                                 <UserOutlined style={{fontSize: 40, color: ''}} />
                                 <div style={{marginLeft: 10}}>
                                     <Title style={{color: '#dd22c7'}} level={4} underline>Người thuê</Title>
@@ -54,7 +54,7 @@ class Home extends Component {
                             </div>
                         </Col>
                         <Col xs={{span: 24}} md={{span: 8}}>
-                            <div className='card-info orange flex-row'>
+                            <div className='card-info orange-my flex-row'>
                                 <DollarCircleOutlined style={{fontSize: 40, color: ''}} />
                                 <div style={{marginLeft: 10}}>
                                     <Title style={{color: '#dd7322'}} level={4} underline>Chi phí</Title>
