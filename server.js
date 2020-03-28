@@ -21,6 +21,7 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use(express.static(__dirname + '/Application/build'));
 app.get('/', (req, res) => {
     res.send('Hello mọi người')
 })
