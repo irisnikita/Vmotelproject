@@ -1,6 +1,7 @@
 // Libraries
 import React, {Component} from 'react';
 import ScrollAnimation from 'react-animate-on-scroll';
+import 'animate.css/animate.min.css';
 
 // Icon
 import {DingtalkOutlined, FieldTimeOutlined, PoundOutlined, UsergroupAddOutlined} from '@ant-design/icons';
