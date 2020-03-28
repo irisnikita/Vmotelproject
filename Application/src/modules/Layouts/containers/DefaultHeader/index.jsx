@@ -145,7 +145,7 @@ class DefaultHeader extends Component {
                 className='Default-header'
                 style={{boxShadow: isHideHeader ? '0px 2px 3px rgb(212, 212, 212)' : null}}
             >
-                <div className='flex-row '>
+                <div className='flex-row' style={{marginLeft: '20px'}}>
                     <DingtalkOutlined 
                         style={{
                             fontSize: 40,
@@ -195,10 +195,10 @@ class DefaultHeader extends Component {
                             </Popover>
                         </div> : 
                             <>
-                                <Button type='ghost' shape="round" size='large'>Trang chủ</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large'>Thông tin</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large'>Bảng giá</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large'>Giới thiệu</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Trang chủ</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Thông tin</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Bảng giá</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Giới thiệu</Button> &nbsp;
                                 <Button type='primary' shape="round" className='flex-row' size='large' onClick={this.onClickLoggin}>
                          Dùng Thử
                                 </Button>
