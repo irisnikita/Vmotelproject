@@ -5,6 +5,9 @@ import 'animate.css/animate.min.css';
 import {Row, Col, Typography} from 'antd';
 import CountUp from 'react-countup';
 
+// img
+import hero_right from 'Src/assets/images/hero/hero_right.png';
+
 const {Title} = Typography;
 
 class Introduce extends Component {
@@ -17,17 +20,10 @@ class Introduce extends Component {
 
     componentDidMount() {
         window.addEventListener('scroll',() => {
-            console.log(window.scrollY);
             if (this.refRow.offsetTop < window.scrollY) {
                 this.setState({isShowCountUp: true});
             }
         });
-        
-        // if (this.refRow.offsetTop < window.scrollY) {
-        //     isShowCountUp = true;
-        // }
-
-        console.log(this.refRow.offsetTop);
 
         this.isMounted = true;
         setTimeout(() => {
@@ -68,7 +64,7 @@ class Introduce extends Component {
                     </Col>
                     <Col xs={{span: 24, offset: 0}} md={{span: 8, offset: 2}}>
                         <ScrollAnimation animateIn='fadeInRight'>
-                            <img src="src/assets/images/hero/hero_right.png" width='500px' />
+                            <img src={hero_right} width='500px' />
                         </ScrollAnimation>
                     </Col>
                 </Row>
