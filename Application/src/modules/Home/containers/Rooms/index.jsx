@@ -14,7 +14,7 @@ class Rooms extends Component {
         try {
             this.props.layout({
                 type: 'path',
-                value: 'Danh sách phòng'
+                value: 'rooms'
             });
 
             // Get data rooms
@@ -27,17 +27,17 @@ class Rooms extends Component {
 
     getDataRooms = () => {
         try {
-            let getRooms = roomServices.getList({
-                id: 'hello'
-            });
+            // let getRooms = roomServices.getList({
+            //     id: 'hello'
+            // });
 
-            if (getRooms) {
-                getRooms.then(res => {
-                    if (res.data) {
-                        console.log(res);
-                    }
-                });
-            }
+            // if (getRooms) {
+            //     getRooms.then(res => {
+            //         if (res.data) {
+            //             console.log(res);
+            //         }
+            //     });
+            // }
 
         } catch (error) {
             //

@@ -82,6 +82,25 @@
   }
 }
 
+.list-menu-user {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  .item-user {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 200ms;
+    &:hover {
+      background-color: rgba(104, 218, 233, 0.349);
+    }
+  }
+}
+
 .forgot {
   cursor: pointer;
   &:hover {
@@ -109,6 +128,11 @@
 }
 
 .flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.flex-cloumn {
   display: flex;
   align-items: center;
 }

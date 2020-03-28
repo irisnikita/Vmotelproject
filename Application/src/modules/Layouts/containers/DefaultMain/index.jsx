@@ -6,9 +6,6 @@ import {Layout} from 'antd';
 // Assets
 import routes from 'Src/routes';
 
-// Components
-import DefaultSlider from 'Layouts/containers/DefaultSlider';
-
 const {Content} = Layout;
 
 class DefaultMain extends Component {
@@ -17,7 +14,6 @@ class DefaultMain extends Component {
             <>
                 <Layout className='layout'>
                     <Layout>
-                        <DefaultSlider />
                         <Layout style={{padding: 10}}>
                             <Content className={'right-content'}>
                                 <Suspense fallback={<div>Loading...</div>}>

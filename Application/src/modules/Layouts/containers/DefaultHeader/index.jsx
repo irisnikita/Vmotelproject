@@ -1,16 +1,57 @@
 // Libraries
 import React, {Component} from 'react';
-import {Layout, Typography, Button, Avatar} from 'antd';
+import {Layout, Button, Avatar, Menu, Divider, Popover} from 'antd';
+import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
 // Icon
-import {DingtalkOutlined, UserOutlined, MessageOutlined} from '@ant-design/icons';
+import {DingtalkOutlined} from '@ant-design/icons';
+
+// Actions
+import {layout} from 'Layouts/actions';
 
 // Components
 import DrawerUser from './components/DrawerUser';
 
-const {Text} = Typography;
+const {SubMenu} = Menu;
+
+const menu = [
+    {
+        key: 'dashboard',
+        label: 'Trang Quản lý',
+        icon: 'icon-dashboard',
+        child: [
+            {key: 'mainDash', label: 'Quản lý chung', icon: 'icon-view_list'},
+            {key: 'rooms', label: 'Quản lý phòng', icon: 'icon-airline_seat_individual_suite'}
+        ]
+    },
+    {
+        key: 'finance',
+        label: 'Tài chính',
+        icon: 'icon-attach_money'
+    },
+    {
+        key: 'bill',
+        label: 'Hóa đơn',
+        icon: 'icon-money'
+    },
+    {
+        key: 'contract',
+        label: 'Hợp đồng',
+        icon: 'icon-content_paste'
+    },
+    {
+        key: 'motel',
+        label: 'Nhà trọ, căn hộ',
+        icon: 'icon-apartment',
+        child: [
+            {key: 'motel', label: 'Khu trọ, khu căn hộ',icon: 'icon-house'},
+            {key: 'roomMotel', label: 'Phòng', icon: 'icon-airline_seat_individual_suite'},
+            {key: 'service', label: 'Dịch vụ', icon: 'icon-room_service'}
+        ]
+    }
+];
 
 class DefaultHeader extends Component {
     constructor(props) {
@@ -30,6 +71,42 @@ class DefaultHeader extends Component {
         });
     }
 
+    onClickItem = (path) => {
+        if (path) {
+            this.props.layout({
+                type: 'path',
+                value: path
+            });
+        }
+    }
+
+    showRenderMenu = () => {
+        return menu.map(item => {
+            if (item.child) {
+                return <SubMenu key={item.key} title={
+                    <span>
+                        <i className={item.icon} /> &nbsp;
+                        {item.label}
+                    </span>
+                }>
+                    {item.child.map(child => (
+                        <Menu.Item key={child.key} onClick={()=>this.onClickItem(child.key)}>
+                            <Link to={`/${child.key}`}>
+                                <i className={child.icon} /> &nbsp;
+                                {child.label}
+                            </Link>
+                        </Menu.Item>
+                    ))}
+                </SubMenu>;
+            } else {
+                return <Menu.Item key={item.key} onClick={()=>this.onClickItem(item.key)}>
+                    <i className={item.icon} /> &nbsp;
+                    {item.label}
+                </Menu.Item>;
+            }
+        });
+    }
+
     onClickLoggin = () => {
         try {
             this.setState({
@@ -38,6 +115,14 @@ class DefaultHeader extends Component {
         } catch (error) {
             //
         }
+    }
+
+    onClickLogout = () => {
+        this.props.layout({
+            type: 'logout',
+            value: {}
+        });
+        localStorage.removeItem('userInfo');
     }
 
     toggleDrawer = () => {
@@ -69,23 +154,55 @@ class DefaultHeader extends Component {
                             borderRight: '3px solid #fff'
                         }} /> 
                     <div className='title-header'>Vmotel </div>
+                    <Divider type='vertical' />
+                    <Menu mode='horizontal' selectedKeys={[this.props.path]}>
+                        { !_.isEmpty(userLogin) ? this.showRenderMenu() : null}
+                    </Menu>
                    
                 </div>
                 <div className='flex-row'>
-                    <Button type='ghost' shape="round" size='large'>Trang chủ</Button> &nbsp;
-                    <Button type='ghost' shape="round" size='large'>Thông tin</Button> &nbsp;
-                    <Button type='ghost' shape="round" size='large'>Bảng giá</Button> &nbsp;
-                    <Button type='ghost' shape="round" size='large'>Giới thiệu</Button> &nbsp;
+                    
                     {
                         !_.isEmpty(userLogin) ? <div className='flex-row'>
                             <div style={{fontSize: 15, fontWeight: 600}}>
                                 {userLogin.userName}
                             </div>
-                            <Avatar  size='large' style={{marginLeft: 10, cursor: 'pointer'}} src='https://nguoinoitieng.tv/images/nnt/96/0/bber.jpg' />
+                            <Popover placement='bottomRight' content={
+                                <div className='list-menu-user'>
+                                    <div className='item-user'>
+                                        <i className='icon-person' style={{marginRight: 5}} />
+                                        Thông tin cá nhân
+                                    </div>
+                                    <div className='item-user'>
+                                        <i className='icon-settings' style={{marginRight: 5}} />
+                                        Cấu hình chung
+                                    </div>
+                                    <div  className='item-user'>
+                                        <i className='icon-reorder' style={{marginRight: 5}} />
+                                        Danh sách dịch vụ
+                                    </div>
+                                    <div className='item-user'>
+                                        <i className='icon-build' style={{marginRight: 5}} />
+                                        Công thức
+                                    </div>
+                                    <div className='item-user' onClick={this.onClickLogout}>
+                                        <i className='icon-exit_to_app' style={{marginRight: 5}} />
+                                        Đăng xuất
+                                    </div>
+                                </div>
+                            }>
+                                <Avatar  size='large' style={{marginLeft: 10, cursor: 'pointer'}} src='https://nguoinoitieng.tv/images/nnt/96/0/bber.jpg' />
+                            </Popover>
                         </div> : 
-                            <Button type='primary' shape="round" className='flex-row' size='large' onClick={this.onClickLoggin}>
+                            <>
+                                <Button type='ghost' shape="round" size='large'>Trang chủ</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large'>Thông tin</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large'>Bảng giá</Button> &nbsp;
+                                <Button type='ghost' shape="round" size='large'>Giới thiệu</Button> &nbsp;
+                                <Button type='primary' shape="round" className='flex-row' size='large' onClick={this.onClickLoggin}>
                          Dùng Thử
-                            </Button>
+                                </Button>
+                            </>
                     }
                 </div>
                 <DrawerUser
@@ -104,4 +221,8 @@ function mapStateToProps (state) {
     };
 }
 
-export default connect(mapStateToProps)(DefaultHeader);
+const mapDispatchTopProps = {
+    layout
+};
+
+export default connect(mapStateToProps, mapDispatchTopProps)(DefaultHeader);

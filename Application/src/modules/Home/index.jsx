@@ -18,7 +18,7 @@ class Home extends Component {
         try {
             this.props.layout({
                 type: 'path',
-                value: 'Trang chủ'
+                value: 'mainDash'
             });
         } catch (error) {
             //

@@ -34,6 +34,11 @@ export function* layout({payload}) {
                 userLogin: value
             }));
             break;
+        case 'logout':
+            yield put(userLogin({
+                userLogin: {}
+            }));
+            break;
         default:
             break;
     }
