@@ -5,7 +5,8 @@ import {types} from './actions';
 
 const initialState = {
     userLogin: {},
-    path: ''
+    path: '',
+    isTry: ''
 };
 
 const layoutReducer = (state = initialState, action) => {
@@ -17,6 +18,10 @@ const layoutReducer = (state = initialState, action) => {
         case types.CHANGE_PATH: 
             return (produce(state, draftState => {
                 draftState.path = action.payload.path;
+            })); 
+        case types.TRY_APPLICATION: 
+            return (produce(state, draftState => {
+                draftState.isTry = action.payload.isTry;
             })); 
         default:
             return {...state};
