@@ -34,12 +34,42 @@
   }
 }
 
+.btn-menu-circle {
+  display: flex;
+  cursor: pointer;
+  background-color: rgb(236, 236, 236);
+  padding: 10px;
+  border-radius: 50%;
+}
+
 .intro-page {
   .text-grey {
     color: @color-grey;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
   }
+}
+
+@media only screen and (max-width: 600px) {
+  .menu-header {
+    display: none !important;
+    background: #dd22c7;
+  }
+  .wrap-btn-more {
+    display: flex !important;
+  }
+  .image-logo-hero {
+    width: 400px !important;
+  }
+}
+
+
+.wrap-btn-more {
+  display: none; 
+}
+
+.menu-header {
+  display: flex;
 }
 
 .button-intro {
@@ -127,6 +157,8 @@
   }
 }
 
+
+
 .forgot {
   cursor: pointer;
   &:hover {
@@ -176,6 +208,20 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+
+.background-loading {
+  position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    background: rgb(230, 230, 230);
+    align-items: center;
+    justify-content: center;
 }
 
 .flex-row {

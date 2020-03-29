@@ -1,12 +1,12 @@
 // Libraries
 import React, {Component} from 'react';
-import {Layout, Button, Avatar, Menu, Divider, Popover} from 'antd';
+import {Layout, Button, Avatar, Menu, Divider, Popover, Dropdown} from 'antd';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
 // Icon
-import {DingtalkOutlined} from '@ant-design/icons';
+import {DingtalkOutlined, BarsOutlined} from '@ant-design/icons';
 
 // Actions
 import {layout} from 'Layouts/actions';
@@ -53,6 +53,23 @@ const menu = [
     }
 ];
 
+const menuHeader = (
+    <Menu>
+        <Menu.Item>
+            <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Trang chủ</Button>
+        </Menu.Item>
+        <Menu.Item>
+            <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Thông tin</Button>
+        </Menu.Item>
+        <Menu.Item>
+            <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Bảng giá</Button>
+        </Menu.Item>
+        <Menu.Item>
+            <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Giới thiệu</Button>
+        </Menu.Item>
+    </Menu>
+);
+
 class DefaultHeader extends Component {
     constructor(props) {
         super(props);
@@ -69,6 +86,14 @@ class DefaultHeader extends Component {
             });
             
         });
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.isTry !== prevProps.isTry) {
+            this.setState({
+                isOpenDrawer: true
+            });
+        }
     }
 
     onClickItem = (path) => {
@@ -195,10 +220,17 @@ class DefaultHeader extends Component {
                             </Popover>
                         </div> : 
                             <>
-                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Trang chủ</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Thông tin</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Bảng giá</Button> &nbsp;
-                                <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Giới thiệu</Button> &nbsp;
+                                <div className='flex-row menu-header'>
+                                    <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Trang chủ</Button> &nbsp;
+                                    <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Thông tin</Button> &nbsp;
+                                    <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Bảng giá</Button> &nbsp;
+                                    <Button type='ghost' shape="round" size='large' style={{background: '#fff'}}>Giới thiệu</Button> &nbsp;
+                                </div>
+                                <Dropdown className='wrap-btn-more' overlay={menuHeader} trigger={['click']}>
+                                    <div className='btn-menu-circle'>
+                                        <BarsOutlined />
+                                    </div>
+                                </Dropdown>  &nbsp;
                                 <Button type='primary' shape="round" className='flex-row' size='large' onClick={this.onClickLoggin}>
                          Dùng Thử
                                 </Button>
@@ -217,7 +249,8 @@ class DefaultHeader extends Component {
 function mapStateToProps (state) {
     return {
         path: state.Layouts.layoutReducer.path,
-        userLogin: state.Layouts.layoutReducer.userLogin
+        userLogin: state.Layouts.layoutReducer.userLogin,
+        isTry: state.Layouts.layoutReducer.isTry
     };
 }
 
