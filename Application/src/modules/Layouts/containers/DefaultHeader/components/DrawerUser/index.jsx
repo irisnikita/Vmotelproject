@@ -14,7 +14,7 @@ import {UserOutlined, LockOutlined} from '@ant-design/icons';
 import {layout} from 'Layouts/actions';
 
 // Services
-import * as userService from 'Src/services/User/login';
+import * as userService from 'Src/services/User';
 
 const defaultProps = {
     isOpen: false
@@ -80,6 +80,7 @@ class DrawerUser extends Component {
                             value: data.user
                         });
                         message.success('Đăng nhập thành công');
+                        this.props.toggleDrawer();
                     }
                     else {
                         message.error(res.data.message);

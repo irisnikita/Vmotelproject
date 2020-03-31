@@ -46,7 +46,7 @@ const menu = [
         label: 'Nhà trọ, căn hộ',
         icon: 'icon-apartment',
         child: [
-            {key: 'motel', label: 'Khu trọ, khu căn hộ',icon: 'icon-house'},
+            {key: 'blocks', label: 'Khu trọ, khu căn hộ',icon: 'icon-house'},
             {key: 'roomMotel', label: 'Phòng', icon: 'icon-airline_seat_individual_suite'},
             {key: 'service', label: 'Dịch vụ', icon: 'icon-room_service'}
         ]

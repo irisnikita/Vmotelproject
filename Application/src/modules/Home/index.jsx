@@ -3,6 +3,9 @@ import React, {Component} from 'react';
 import {Button, Input, Col, Row, Typography, Select, Divider} from 'antd';
 import {connect} from 'react-redux';
 
+// Services
+import * as userServices from 'Src/services/User';
+
 // Actions
 import {layout} from 'Layouts/actions';
 
@@ -16,6 +19,7 @@ class Home extends Component {
 
     componentDidMount() {
         try {
+            this.getDataUsers();
             this.props.layout({
                 type: 'path',
                 value: 'mainDash'
