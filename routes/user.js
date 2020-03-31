@@ -101,7 +101,25 @@ const userRoute = (app) => {
                 }
                 else {
                     res.send({
-                        message: 'Can\'t get users'
+                        message: 'Can\'t get users',
+                        error: err
+                    })
+                }
+            })
+        } else {
+            userModel.get(id, (err, rows) => {
+                if (!err) {
+                    res.send({
+                        message: 'Get user success',
+                        status: res.statusCode,
+                        data: {
+                            user: rows[0]
+                        }
+                    })
+                } else {
+                    res.send({
+                        message: 'Can\'t get user',
+                        error: err
                     })
                 }
             })

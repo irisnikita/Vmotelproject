@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {Form, Input, Button, Radio, Select, notification} from 'antd';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import jsonProvince from 'Src/assets/Json/provincial.json';
 
 // Services
 import * as userServices from 'Src/services/User/register';
@@ -42,7 +43,7 @@ const Register = (props) => {
     const getDataProvincial = async () => {
         const getProvincial = await axios({
             method: 'GET',
-            url: 'Src/assets/Json/provincial.json'
+            url: jsonProvince
         });
         
         if (getProvincial) {

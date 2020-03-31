@@ -27,8 +27,10 @@ class Introduce extends Component {
 
     componentDidMount() {
         window.addEventListener('scroll',() => {
-            if (this.refRow.offsetTop - 100 < window.scrollY) {
-                this.setState({isShowCountUp: true});
+            if (this.refRow) {
+                if (this.refRow.offsetTop - 100 < window.scrollY) {
+                    this.setState({isShowCountUp: true});
+                }
             }
         });
 

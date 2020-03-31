@@ -2,10 +2,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import _ from 'lodash';
-import axios from 'axios';
 
-// Utils
-import {appConfig} from 'Src/constant.js';
+// Services
+import * as userServices from 'Src/services/User';
 
 // Actions
 import {layout} from 'Layouts/actions';
@@ -31,12 +30,9 @@ class Layouts extends Component {
         let userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
         if (userInfo) {
-            const {token = '', user = {}} = userInfo;
+            const {user = {}} = userInfo;
 
-            let validate = await axios({
-                method: 'POST',
-                url: `${appConfig.API}/user/validate?token=${token}`
-            });
+            let validate = await userServices.validate();
 
             if (validate) {
                 if (validate.data && validate.data.data) {

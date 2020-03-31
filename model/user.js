@@ -20,6 +20,10 @@ const User = {
     getAll: (callback) => {
         let query = 'SELECT * FROM USERS ';
         return connection.query(query, callback);
+    },
+    get: (id, callback) => {
+        let query = 'SELECT * FROM USERS WHERE id = ?';
+        return connection.query(query, [id], callback);
     }
 }
 
