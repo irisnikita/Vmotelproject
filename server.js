@@ -13,7 +13,7 @@ require('dotenv').config();
 let room = require('./model/room.model');
 
 // Define server
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 80;
 const app = express();
 const server = http.createServer(app);
 
