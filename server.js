@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
 
 require('./routes/room')(app);
 require('./routes/user')(app);
+require('./routes/block')(app);
 
 server.listen(PORT, () => {
     console.log('Server is run as port: ', PORT)

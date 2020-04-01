@@ -171,19 +171,29 @@ class DefaultHeader extends Component {
                 style={{boxShadow: isHideHeader ? '0px 2px 3px rgb(212, 212, 212)' : null}}
             >
                 <div className='flex-row' style={{marginLeft: '20px'}}>
-                    <DingtalkOutlined 
-                        style={{
-                            fontSize: 40,
-                            color: 'black',
-                            paddingRight: '5px',
-                            borderRight: '3px solid #fff'
-                        }} /> 
-                    <div className='title-header'>Vmotel </div>
-                    <Divider type='vertical' />
-                    <Menu mode='horizontal' selectedKeys={[this.props.path]}>
+                    <div className='flex-row logo-header'>
+                        <DingtalkOutlined 
+                            style={{
+                                fontSize: 40,
+                                color: 'black',
+                                paddingRight: '5px',
+                                borderRight: '3px solid #fff'
+                            }} /> 
+                        <div className='title-header'>Vmotel </div>
+                        <Divider type='vertical' />
+                    </div>
+                    {
+                        !_.isEmpty(userLogin) ? <Dropdown className='wrap-btn-more' overlay={<Menu selectedKeys={[this.props.path]}>
+                            {this.showRenderMenu()}
+                        </Menu>} trigger={['click']}>
+                            <div className='btn-menu-circle'>
+                                <BarsOutlined />
+                            </div>
+                        </Dropdown>  : null
+                    }
+                    <Menu mode='horizontal' className='menu-header-home' selectedKeys={[this.props.path]}>
                         { !_.isEmpty(userLogin) ? this.showRenderMenu() : null}
                     </Menu>
-                   
                 </div>
                 <div className='flex-row'>
                     

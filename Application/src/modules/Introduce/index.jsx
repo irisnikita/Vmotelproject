@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import ScrollAnimation from 'react-animate-on-scroll';
 import 'animate.css/animate.min.css';
-import {Row, Col, Typography, Spin} from 'antd';
+import {Row, Col, Typography, Spin, BackTop} from 'antd';
 import CountUp from 'react-countup';
 import {connect} from 'react-redux';
 
@@ -60,6 +60,7 @@ class Introduce extends Component {
 
         return (
             <> 
+                <BackTop />
                 {
                     isLoadingHome ? <div className='background-loading'><SmileOutlined style={{fontSize: 50}} className='animated bounce infinite ' /> Loading...</div> :   
                         <div className='intro-page'>
@@ -195,6 +196,7 @@ class Introduce extends Component {
                                     </Row>
                                 </div>
                             </ScrollAnimation>
+                            <Row style={{height: 400}} />
                         </div>
                 }
             </>
