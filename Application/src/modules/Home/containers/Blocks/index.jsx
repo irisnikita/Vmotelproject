@@ -1,7 +1,7 @@
 // Libraries
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Button, Table,Row,Col, Typography, Tooltip} from 'antd';
+import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message} from 'antd';
 
 // Components
 import BlockModal from './components/BlockModal';
@@ -9,21 +9,28 @@ import BlockModal from './components/BlockModal';
 // Actions
 import {layout} from 'Layouts/actions';
 
+// Servers
+import * as blockServices from 'Src/services/block';
+
 // Antd
 const {Title, Text} = Typography;
 
 const Blocks = (props) => {
     // State
-    const [blocks, setBlocks] = useState([
-        {key: '1', nameBlock: 'Khu tòa a', address: '55.3 Bình Lợi/32', desc: 'Không có gì ngoài tiền'}
-    ]);
-    const [blockSelected, setBlockSelected] = useState([]);
+    const [blocks, setBlocks] = useState([]);
     const [blockModal, setBlockModal] = useState({
-        isOpen: false
+        isOpen: false,
+        blockEdited: {}
     });
+    const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
+    const [selectedRowKeys, setselectedRowKeys] = useState([]);
 
     const rowSelection = {
-
+        selectedRowKeys,
+        onChange: (selectedRowsKey) => {
+            console.log(selectedRowsKey);
+            setselectedRowKeys(selectedRowsKey);
+        }
     };
 
     const columns = [
@@ -32,16 +39,23 @@ const Blocks = (props) => {
             dataIndex: 'edit',
             key:'edit',
             width: 100,
-            render: ()=> <div className='flex-row-center'>
+            render: (id)=> <div className='flex-row-center'>
                 <Tooltip title='Sửa'>
-                    <Button className='flex-row-center' size='small' shape='circle'>
+                    <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
                         <i className='icon-createmode_editedit' />
                     </Button>
                 </Tooltip> &nbsp;
                 <Tooltip title='Xóa'>
-                    <Button className='flex-row-center' size='small' type='danger' shape='circle'>
-                        <i className='icon-highlight_remove' />
-                    </Button>
+                    <Popconfirm
+                        title='Bạn muốn xóa khu trọ/căn hộ này?'
+                        onConfirm={()=>onConfirmRemove(id)}
+                        okText='Xóa'
+                        cancelText='Hủy'
+                    >
+                        <Button className='flex-row-center' size='small' type='danger' shape='circle'>
+                            <i className='icon-highlight_remove' />
+                        </Button>
+                    </Popconfirm>
                 </Tooltip>
             </div>
         },
@@ -68,6 +82,9 @@ const Blocks = (props) => {
             type: 'path',
             value: 'blocks'
         });
+
+        // Call api get blocks
+        getDataBlocks();
     },[]);
 
     // Toggle BlockModal
@@ -78,11 +95,87 @@ const Blocks = (props) => {
         });
     };
 
+    const onConfirmRemove = (id) => {
+        let deleteBlock = blockServices.del({
+            id
+        });
+
+        if (deleteBlock) {
+            deleteBlock.then(res => {
+                if (res.data && res.data.data) {
+                    message.success('Xóa khu trọ/căn hộ thành công');
+                    
+                    getDataBlocks();
+                } else {
+                    message.error('Xóa khu trọ/căn hộ thất bại!');
+                }
+            });
+        }
+    };
+
     const onClickAddNew = () => {
         setBlockModal({
             ...blockModal,
+            blockEdited: {},
             isOpen: true
         });
+    };
+
+    const getDataBlocks = () => {
+        const getBlocks = blockServices.getList();
+
+        setIsShowLoadingTable(true);
+
+        if (getBlocks) {
+            getBlocks.then(res => {
+                if (res.data && res.data.data) {
+                    const {blocks} = res.data.data;
+
+                    const draftBlocks = blocks.map(block => ({
+                        key: block.id,
+                        edit: block.id,
+                        nameBlock: block.nameBlock,
+                        address: block.address,
+                        desc: block.descreption
+                    }));
+
+                    setBlocks(draftBlocks);
+                } 
+                setIsShowLoadingTable(false);
+            });
+        }
+    };
+
+    const onClickEdit = (id) => {
+        let editedBlock = blocks.find(block => block.key === id);
+
+        setBlockModal({
+            ...blockModal,
+            isOpen: true,
+            blockEdited: editedBlock
+        });
+    };
+
+    const onConfirmDeleteAll = () => {
+        let deleteAll = blockServices.delAll({
+            blocksId: selectedRowKeys
+        });
+
+        if (deleteAll) {
+            deleteAll.then(res => {
+                if (res.data && res.data.data) {
+                    message.success('Xóa thành công!');
+                    setselectedRowKeys([]);
+                    getDataBlocks();
+                } else {
+                    message.error('Xóa không thành công!');
+                }
+            });
+        }
+    };
+
+    const callbackBlockModal = () => {
+        getDataBlocks();
     };
 
     return (
@@ -96,19 +189,32 @@ const Blocks = (props) => {
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
                     </Button> &nbsp;
-                    <Button type='danger'>
-                        <i className='icon-delete' /> &nbsp;
-                        Xóa nhiều
-                    </Button>
+                    <Popconfirm
+                        placement="bottom"
+                        title={`Bạn có muốn xóa ${selectedRowKeys.length} khu trọ/căn hộ này?`}
+                        onConfirm={onConfirmDeleteAll}
+                        okText='Xóa'
+                        cancelText='Hủy'
+                    >
+                        <Button type='danger' disabled={selectedRowKeys.length > 0 ? false : true}>
+                            <i className='icon-delete' /> &nbsp;
+                            Xóa nhiều
+                        </Button>
+                    </Popconfirm>
                 </Col>
             </Row>
-            <Row style={{padding: 10}}>
-                <Table size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={blocks} />
-            </Row>
+            
+            <Spin spinning={isShowLoadingTable} tip='Loading...'>
+                <Row style={{padding: 10}}>
+                    <Table size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={blocks} />
+                </Row>
+            </Spin>
             <BlockModal 
+                blockEdited={blockModal.blockEdited}
                 isOpen={blockModal.isOpen}
                 toggleModal={toggleBlockModal}
-            />
+                callback={callbackBlockModal}
+            /> 
         </>
     );
 };
