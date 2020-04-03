@@ -8,12 +8,8 @@ const userModel = require('../model/user');
 const jwtHelper = require('../helpers/jwt.helper');
 const bcrypt = require('bcrypt');
 
-// Utils
+// AppConfig
 const appConfig = require('../constant');
-
-// Model
-let room = require('../model/room.model');
-
 
 const userRoute = (app) => {
 

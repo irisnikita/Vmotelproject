@@ -120,11 +120,11 @@ let BlockModal = (props) => {
     const layout = {
         labelCol: {
             xs: {span: 24},
-            md: {span: 4}
+            md: {span: 6}
         },
         wrapperCol: {
             xs: {span: 24},
-            md: {span: 20}
+            md: {span: 18}
         }
     };
 
@@ -132,8 +132,8 @@ let BlockModal = (props) => {
         <Modal
             width={700}
             title={<div className='flex-row' style={{fontSize: 20, color: '#08979c'}}>
-                <i className={type === 'create' ? 'icon-add' : 'icon-createmode_editedit'} /> &nbsp;
-                <strong >{title}</strong>
+                <i className={_.isEmpty(blockEdited) ? 'icon-add' : 'icon-createmode_editedit'} /> &nbsp;
+                <strong >{_.isEmpty(blockEdited) ? 'Thêm mới' : 'Chỉnh sửa'}</strong>
             </div>}
             forceRender
             destroyOnClose={false} 

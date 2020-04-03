@@ -28,7 +28,6 @@ const Blocks = (props) => {
     const rowSelection = {
         selectedRowKeys,
         onChange: (selectedRowsKey) => {
-            console.log(selectedRowsKey);
             setselectedRowKeys(selectedRowsKey);
         }
     };
