@@ -13,6 +13,7 @@ import {layout} from 'Layouts/actions';
 import DefaultMain from 'Src/modules/Layouts/containers/DefaultMain';
 import DefaultHeader from 'Src/modules/Layouts/containers/DefaultHeader';
 import Introduce from 'Src/modules/Introduce';
+import axios from 'axios';
 
 class Layouts extends Component {
     isMounted = false

@@ -6,13 +6,6 @@ const blockModel = require('../model/block');
 const jwtHelper = require('../helpers/jwt.helper');
 const bcrypt = require('bcrypt');
 
-// Utils
-const appConfig = require('../constant');
-
-// Model
-let room = require('../model/room.model');
-
-
 const blockRouter = (app) => {
 
 

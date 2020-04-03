@@ -4,13 +4,9 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const roomRoutes = express.Router();
 
 require('dotenv').config();
 
-// Model
-let room = require('./model/room.model');
 
 // Define server
 const PORT = process.env.PORT || 80;
@@ -29,6 +25,7 @@ app.get('/', (req, res) => {
 require('./routes/room')(app);
 require('./routes/user')(app);
 require('./routes/block')(app);
+require('./routes/room')(app);
 
 server.listen(PORT, () => {
     console.log('Server is run as port: ', PORT)

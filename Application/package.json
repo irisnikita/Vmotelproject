@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development --open --hot",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "dev": "next",
+    "build-next": "next build",
+    "next-start": "next start"
   },
   "keywords": [],
   "author": "",
@@ -47,6 +50,8 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "next": "^9.3.4",
+    "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
     "react-animate-on-scroll": "^2.1.5",
