@@ -8,13 +8,13 @@ export function getList(params) {
     return services.getList({...params,API: appConfig.API + '/room/get-rooms'});
 }
 export function del(params) {
-    return services.del({...params,API: appConfig.API + '/block/delete'});
+    return services.del({...params,API: appConfig.API + '/room/delete'});
 }
 export function delAll(params) {
-    return services.create({...params,API: appConfig.API + '/block/delete-all'});
+    return services.create({...params,API: appConfig.API + '/room/delete-all'});
 }
 export function update(params) {
-    return services.update({...params,API: appConfig.API + '/block/update'});
+    return services.update({...params,API: appConfig.API + '/room/update'});
 }
 // export function getUsers(params) {
 //     return services.getList({...params,API: appConfig.API + '/user/get-user'});

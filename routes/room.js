@@ -42,6 +42,59 @@ const roomRouter = (app) => {
         })
     })
 
+    roomRouters.delete('/delete/:id', (req, res) => {
+        roomModel.delete(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Delete room success',
+                    data: {
+                        status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: 'Can\'t delete room success'
+                })
+            }
+        })
+    })
+
+    roomRouters.put('/update/:id', (req, res) => {
+        roomModel.update(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Update room success',
+                    data: {
+                        status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
+
+    roomRouters.post('/delete-all', (req, res) => {
+        roomModel.deleteAll(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Delete rooms success',
+                    data: {
+                        status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
 
     app.use('/room', roomRouters);
 }

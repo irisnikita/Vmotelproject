@@ -1,5 +1,5 @@
 // Libraries
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {Modal, Typography, Form, Input, Button, message, Row, Col, InputNumber} from 'antd';
 import {connect} from 'react-redux';
@@ -15,11 +15,11 @@ const RoomsMotel = props => {
     const [form] = Form.useForm();
 
     // props
-    const {isOpen, toggleModal, blockEdited, callback, type, title, block} = props;
+    const {isOpen, toggleModal, roomEdited, callback, type, title, block} = props;
 
     // State
     const [isShowLoading, setIsShowLoading] = useState(false);
-
+    
     const layout = {
         labelCol: {
             xs: {span: 24},
@@ -31,8 +31,56 @@ const RoomsMotel = props => {
         }
     };
 
+    useEffect(() => {
+        if (isOpen === true) {
+            if (!_.isEmpty(roomEdited)) {
+                form.setFieldsValue({
+                    nameRoom: roomEdited.nameRoom,
+                    maxPeople: roomEdited.maxPeople,
+                    description: roomEdited.description,
+                    floor: roomEdited.floor,
+                    square: roomEdited.square,
+                    price: roomEdited.price
+                });
+            } else {
+                form.setFieldsValue({
+                    nameRoom: '',
+                    maxPeople: '',
+                    description: '',
+                    floor: '',
+                    square: '',
+                    price: ''
+                });
+            }
+        }
+    }, [isOpen, roomEdited]);
+
     const onFinishForm = (value) =>{
-        createRoom(value);
+        if (_.isEmpty(roomEdited)) {
+            createRoom(value);
+        } else {
+            updateRoom(value);
+        }
+    };
+
+    const updateRoom = async (room) => {
+        setIsShowLoading(true);
+
+        const updateRoom = await roomServices.update({
+            ...room,
+            id: roomEdited.key
+        });
+
+        if (updateRoom) {
+            if (updateRoom.data && updateRoom.data.data) {
+                message.success('Cập nhật phòng thành công');
+                toggleModal();
+                callback();
+            } else {
+                message.error('Cập nhật phòng thất bại');
+            }
+            setIsShowLoading(false);
+        }
     };
 
     const createRoom = async (room) => {
@@ -73,7 +121,7 @@ const RoomsMotel = props => {
     };
 
     const onClickCancel = () => {
-
+        toggleModal();
     };
 
     return (
@@ -111,7 +159,7 @@ const RoomsMotel = props => {
                                 {required: true, message: 'Hãy nhập tên phòng'}
                             ]}
                         >
-                            <Input placeholder='Nhập tên phòng' />
+                            <Input style={{width: 200}} placeholder='Nhập tên phòng' />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -178,7 +226,7 @@ const RoomsMotel = props => {
                                 md: {span: 4}
                             }}
                             label='Mô tả'
-                            name='descreption'
+                            name='description'
                         >
                             <TextArea placeholder='Hãy nhập mô tả' />
                         </Form.Item>
@@ -190,7 +238,7 @@ const RoomsMotel = props => {
                     }}
                 >
                     <div className='flex-row' style={{justifyContent: 'flex-end'}}>
-                        <Button onClick={onClickCancel}>Hủy bỏ</Button>&nbsp;
+                        <Button onClick={onClickCancel} >Hủy bỏ</Button>&nbsp;
                         <Button htmlType='submit' type='primary' loading={isShowLoading}>Lưu lại</Button> 
                     </div>
                 </Form.Item>

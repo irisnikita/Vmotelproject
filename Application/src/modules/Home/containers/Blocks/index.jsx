@@ -135,7 +135,7 @@ const Blocks = (props) => {
                         edit: block.id,
                         nameBlock: block.nameBlock,
                         address: block.address,
-                        desc: block.descreption
+                        desc: block.description
                     }));
 
                     setBlocks(draftBlocks);
@@ -189,6 +189,7 @@ const Blocks = (props) => {
                         Thêm mới
                     </Button> &nbsp;
                     <Popconfirm
+                        disabled={selectedRowKeys.length > 0 ? false : true}
                         placement="bottom"
                         title={`Bạn có muốn xóa ${selectedRowKeys.length} khu trọ/căn hộ này?`}
                         onConfirm={onConfirmDeleteAll}
