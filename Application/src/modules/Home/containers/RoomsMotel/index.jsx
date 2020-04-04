@@ -30,6 +30,14 @@ const RoomsMotel = props => {
         isOpen: false,
         roomEdited: {}
     });
+    const [selectedRowKeys, setselectedRowKeys] = useState([]);
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (selectedRowsKey) => {
+            setselectedRowKeys(selectedRowsKey);
+        }
+    };
 
     const columns = [
         {
@@ -104,8 +112,8 @@ const RoomsMotel = props => {
         },
         {
             title: 'Mô tả',
-            dataIndex: 'descreption',
-            key:'descreption'
+            dataIndex: 'description',
+            key:'description'
         }
     ];
 
@@ -120,7 +128,11 @@ const RoomsMotel = props => {
 
     useEffect(()=>{
         if (blocks.length > 0) {
-            if (localStorage.getItem('blockSelected')) {
+
+            // had block in list
+            let isHaded = blocks.some(block => block.id === +localStorage.getItem('blockSelected'));
+
+            if (localStorage.getItem('blockSelected') && isHaded) {
                 const defaultBlock = localStorage.getItem('blockSelected');
     
                 setBlockSelected(+defaultBlock);
@@ -141,21 +153,40 @@ const RoomsMotel = props => {
 
     }, [blockSelected]);
 
-    const onClickEdit = () => {
+    const onClickEdit = (id) => {
+        const room = rooms.find(room => room.key === id);
 
+        setRoomModal({
+            ...roomModal,
+            isOpen: true,
+            roomEdited: room
+        });
     };
 
-    const onConfirmRemove = () => {
+    const onConfirmRemove = async (id) => {
+        if (id) {
+            const deleteRoom = await roomServices.del({
+                id
+            });
 
+            if (deleteRoom) {
+                if (deleteRoom.data && deleteRoom.data.data) {
+                    message.success('Xóa phòng thành công');
+                    
+                    getDataRooms();
+                } else {
+                    message.error('Xóa phòng không thành công');
+                }
+            }
+        } 
     };
 
     const onChangeBlocks = (value) => {
         localStorage.setItem('blockSelected',value);
+        
         setBlockSelected(value);
-    };
-
-    const rowSelection = () => {
-
+        
+        getDataRooms();
     };
 
     const getDataRooms = async () => {
@@ -177,7 +208,7 @@ const RoomsMotel = props => {
                     floor: room.floor,
                     square: room.square,
                     price: room.price,
-                    descreption: room.descreption,
+                    description: room.description,
                     maxPeople: room.maxPeople,
                     status: room.status
                 }));
@@ -206,10 +237,26 @@ const RoomsMotel = props => {
         }
     };
 
+    const onConfirmDelete = async () => {
+        const deleteAll = await roomServices.delAll({
+            roomsId: selectedRowKeys
+        });
+
+        if (deleteAll) {
+            if (deleteAll.data && deleteAll.data.data) {
+                message.success('Xóa thành công');
+                getDataRooms();
+            } else {
+                message.error('Xóa thất bại');
+            }
+        }
+    };
+
     const onClickAddNew = () => {
         setRoomModal({
             ...roomModal,
-            isOpen: true
+            isOpen: true,
+            roomEdited: {}
         });
     };
 
@@ -260,20 +307,23 @@ const RoomsMotel = props => {
                     </Input.Group>
                 </Col>
                 <Col xs={{span: 24}} md={{span: 12}} className='flex-row' style={{justifyContent: 'flex-end'}}>
-                    <Button type='primary' className='flex-row' onClick={onClickAddNew} >
+                    <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' onClick={onClickAddNew} >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
                     </Button> &nbsp;
-                    <Button type='primary' className='flex-row' >
+                    <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm nhiều
                     </Button> &nbsp;
                     <Popconfirm
+                        disabled={selectedRowKeys.length > 0 ? false : true}
                         placement="bottom"
+                        title={`Bạn có muốn xóa ${selectedRowKeys.length} phòng này?`}
                         okText='Xóa'
+                        onConfirm={onConfirmDelete}
                         cancelText='Hủy'
                     >
-                        <Button type='danger' >
+                        <Button disabled={selectedRowKeys.length > 0 ? false : true} type='danger' >
                             <i className='icon-delete' /> &nbsp;
                             Xóa nhiều
                         </Button>
@@ -286,7 +336,7 @@ const RoomsMotel = props => {
                 </Row>
             </Spin>
             <RoomModal
-                blockEdited={roomModal.roomEdited}
+                roomEdited={roomModal.roomEdited}
                 block={blocks.find(block => block.id === blockSelected)}
                 isOpen={roomModal.isOpen}
                 toggleModal={toggleRoomModal}

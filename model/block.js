@@ -2,9 +2,9 @@ const connection = require('../database');
 
 const Block = {
     create: (req, callback) => {
-        const { nameBlock = '', address = '', descreption = '', idOwner = 0 } = req.body;
-        let query = 'INSERT INTO BLOCKS (nameBlock, address, descreption, idOwner ) VALUES (?,?,?,?)'
-        return connection.query(query, [nameBlock, address, descreption, idOwner], callback)
+        const { nameBlock = '', address = '', description = '', idOwner = 0 } = req.body;
+        let query = 'INSERT INTO BLOCKS (nameBlock, address, description, idOwner ) VALUES (?,?,?,?)'
+        return connection.query(query, [nameBlock, address, description, idOwner], callback)
     },
     getAll: (req, callback) => {
         const { userId = '' } = req.query;
@@ -26,11 +26,11 @@ const Block = {
         return connection.query(query, [blocksId], callback)
     },
     update: (req, callback) => {
-        const { nameBlock, address, descreption } = req.body;
+        const { nameBlock, address, description } = req.body;
         const { id = '' } = req.params;
-        let query = 'UPDATE BLOCKS SET nameBlock = ?, address = ?, descreption = ? WHERE id = ?'
+        let query = 'UPDATE BLOCKS SET nameBlock = ?, address = ?, description = ? WHERE id = ?'
 
-        return connection.query(query, [nameBlock, address, descreption, id], callback)
+        return connection.query(query, [nameBlock, address, description, id], callback)
     },
     get: (id, callback) => {
         let query = 'SELECT * FROM USERS WHERE id = ?';

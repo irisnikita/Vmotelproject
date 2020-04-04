@@ -38,13 +38,13 @@ let BlockModal = (props) => {
             form.setFieldsValue({
                 nameBlock: blockEdited.nameBlock,
                 address: blockEdited.address,
-                descreption: blockEdited.desc
+                description: blockEdited.desc
             });
         } else {
             form.setFieldsValue({
                 nameBlock: '',
                 address: '',
-                descreption: ''
+                description: ''
             });
         }
     },[isOpen,blockEdited]);
@@ -164,7 +164,7 @@ let BlockModal = (props) => {
                 </Form.Item>
                 <Form.Item
                     label='Mô tả'
-                    name='descreption'
+                    name='description'
                 >
                     <TextArea placeholder='Hãy nhập mô tả' />
                 </Form.Item>
