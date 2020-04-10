@@ -26,6 +26,7 @@ require('./routes/room')(app);
 require('./routes/user')(app);
 require('./routes/block')(app);
 require('./routes/room')(app);
+require('./routes/service')(app);
 
 server.listen(PORT, () => {
     console.log('Server is run as port: ', PORT)

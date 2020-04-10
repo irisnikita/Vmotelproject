@@ -126,7 +126,7 @@ const RoomsMotel = props => {
 
     return (
         <Modal
-            width={800}
+            width={1000}
             title={<div className='flex-row' style={{fontSize: 20, color: '#08979c'}}>
                 <i className={type === 'create' ? 'icon-add' : 'icon-createmode_editedit'} /> &nbsp;
                 <strong >{title}</strong>

@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select, Input} from 'antd';
+import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select, Input, InputNumber} from 'antd';
 import axios from 'axios';
 import numeral from 'numeral';
 
@@ -15,15 +15,17 @@ import * as roomServices from 'Src/services/room';
 
 // Components
 import RoomModal from './components/RoomModal';
+import AddMoreRoom from './components/AddMoreRoom';
 
 // Antd
 const {Title} = Typography;
 const {Option} = Select;
 
 const RoomsMotel = props => {
+    // Props
+    const {blocks} = props;
 
     const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
-    const [blocks, setBlocks] = useState([]);
     const [blockSelected, setBlockSelected] = useState(null);
     const [rooms, setRooms] = useState([]);
     const [roomModal, setRoomModal] = useState({
@@ -31,6 +33,7 @@ const RoomsMotel = props => {
         roomEdited: {}
     });
     const [selectedRowKeys, setselectedRowKeys] = useState([]);
+    const [isOpenAddMoreRoom, setIsOpenAddMoreRoom] = useState(false);
 
     const rowSelection = {
         selectedRowKeys,
@@ -83,27 +86,48 @@ const RoomsMotel = props => {
         {
             title: 'Diện tích(m2)',
             dataIndex: 'square',
-            key:'square'
+            key:'square',
+            sorter: (a, b) => a.square - b.square,
+            ellipsis: true
         },
         {
             title: 'Đơn giá',
             dataIndex: 'price',
             key:'price',
+            sorter: (a, b) => a.price - b.price,
             render: (price) => (<div>
                 {numeral(price).format('0,0.00')} vnđ
             </div>)
         },
         {
-            title: 'Trạng thái',
+            title: <div style={{textAlign: 'center'}}>Trạng thái</div>,
             dataIndex: 'status',
             key:'status',
+            filterMultiple: false,
+            filters: [
+                {
+                    text: 'Còn trống',
+                    value: 0
+                },
+                {
+                    text: 'Đã thuê',
+                    value: 1
+                }
+            ],
+            onFilter: (value, record) => value === record.status,
             render: (status) => {
                 switch (status) {
                     case 0:
-                        return <div>Còn trống</div>;
+                        return <div className='flex-row-center' style={{color: '#f5222d'}}>
+                            <i className='icon-error'  /> &nbsp;
+                            Còn trống
+                        </div>;
                 
                     case 1:
-                        return <div>Đã thuê</div>;
+                        return <div className='flex-row-center' style={{color: '#13c2c2'}}>
+                            <i className='icon-check_circle' /> &nbsp;
+                            Đã thuê
+                        </div>;
                 
                     default:
                         break;
@@ -113,7 +137,8 @@ const RoomsMotel = props => {
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            key:'description'
+            key:'description',
+            ellipsis: true
         }
     ];
 
@@ -122,8 +147,6 @@ const RoomsMotel = props => {
             type: 'path',
             value: 'rooms-motel'
         });
-
-        getDataBlocks();
     }, []);
 
     useEffect(()=>{
@@ -220,23 +243,6 @@ const RoomsMotel = props => {
         }
     };
 
-    const getDataBlocks = () => {
-        const getBlocks = blockServices.getList();
-
-        setIsShowLoadingTable(true);
-
-        if (getBlocks) {
-            getBlocks.then(res => {
-                if (res.data && res.data.data) {
-                    const {blocks} = res.data.data;
-
-                    setBlocks(blocks);
-                } 
-                setIsShowLoadingTable(false);
-            });
-        }
-    };
-
     const onConfirmDelete = async () => {
         const deleteAll = await roomServices.delAll({
             roomsId: selectedRowKeys
@@ -265,6 +271,10 @@ const RoomsMotel = props => {
             ...roomModal,
             isOpen: !roomModal.isOpen
         });
+    };
+
+    const toggleModalAddMoreRoom = () => {
+        setIsOpenAddMoreRoom(!isOpenAddMoreRoom);
     };
 
     const callbackRoomModal = () => {
@@ -298,20 +308,12 @@ const RoomsMotel = props => {
                 </Col>
             </Row>
             <Row style={{marginTop: 20}}>
-                <Col xs={{span: 24}} md={{span: 12}}>
-                    <Input.Group compact>
-                        <Select defaultValue='hello'>
-                            <Option value='hello'>Hello</Option>
-                        </Select>
-                        <Input style={{width: 200}} defaultValue="26888888" />
-                    </Input.Group>
-                </Col>
-                <Col xs={{span: 24}} md={{span: 12}} className='flex-row' style={{justifyContent: 'flex-end'}}>
+                <Col xs={{span: 24}} md={{span: 24}} className='flex-row' style={{justifyContent: 'flex-end'}}>
                     <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' onClick={onClickAddNew} >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
                     </Button> &nbsp;
-                    <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' >
+                    <Button onClick={() => {setIsOpenAddMoreRoom(true)}} disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm nhiều
                     </Button> &nbsp;
@@ -342,6 +344,11 @@ const RoomsMotel = props => {
                 toggleModal={toggleRoomModal}
                 callback={callbackRoomModal}
             />
+            <AddMoreRoom 
+                isOpen={isOpenAddMoreRoom}
+                toggleModal={toggleModalAddMoreRoom}
+                block={blocks.find(block => block.id === blockSelected)}
+            />
         </div>
     );
 };
@@ -350,7 +357,13 @@ const mapDispatchToProps = {
     layout
 };
 
+function mapStateToProps(state) {
+    return {
+        blocks: state.Layouts.layoutReducer.blocks
+    };
+}
+
 RoomsMotel.propTypes = {
 };
 
-export default connect(null, mapDispatchToProps)(RoomsMotel);
+export default connect(mapStateToProps, mapDispatchToProps)(RoomsMotel);

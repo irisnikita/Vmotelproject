@@ -139,6 +139,11 @@ const Blocks = (props) => {
                     }));
 
                     setBlocks(draftBlocks);
+
+                    props.layout({
+                        type: 'getBlocks',
+                        value: blocks || []
+                    });
                 } 
                 setIsShowLoadingTable(false);
             });
