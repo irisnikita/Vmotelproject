@@ -6,7 +6,9 @@ import {types} from './actions';
 const initialState = {
     userLogin: {},
     path: '',
-    isTry: ''
+    isTry: '',
+    blocks: [],
+    blockSelected: {}
 };
 
 const layoutReducer = (state = initialState, action) => {
@@ -23,6 +25,14 @@ const layoutReducer = (state = initialState, action) => {
             return (produce(state, draftState => {
                 draftState.isTry = action.payload.isTry;
             })); 
+        case types.GET_BLOCKS:
+            return (produce(state, draftState => {
+                draftState.blocks = action.payload.blocks;
+            }));
+        case types.SELECT_BLOCK:
+            return (produce(state, draftState => {
+                draftState.blockSelected = action.payload.blockSelected;
+            }));
         default:
             return {...state};
     }

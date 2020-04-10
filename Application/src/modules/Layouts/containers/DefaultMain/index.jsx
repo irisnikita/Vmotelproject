@@ -2,6 +2,13 @@
 import React, {Component, Suspense} from 'react';
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import {Layout} from 'antd';
+import {connect} from 'react-redux';
+
+// Services
+import * as blockServices from 'Src/services/block';
+
+// Actions
+import {layout} from 'Layouts/actions';
 
 // Assets
 import routes from 'Src/routes';
@@ -9,6 +16,28 @@ import routes from 'Src/routes';
 const {Content} = Layout;
 
 class DefaultMain extends Component {
+
+    componentDidMount() {
+        this.getDataBlocks();
+    }
+
+    getDataBlocks = () => {
+        const getBlocks = blockServices.getList();
+
+        if (getBlocks) {
+            getBlocks.then(res => {
+                if (res.data && res.data.data) {
+                    const {blocks} = res.data.data;
+
+                    this.props.layout({
+                        type: 'getBlocks',
+                        value: blocks ? blocks : []
+                    });
+                } 
+            });
+        }
+    };
+
     render() {
         return (
             <>
@@ -37,4 +66,8 @@ class DefaultMain extends Component {
     }
 }
 
-export default withRouter(DefaultMain);
+const mapDispatchToProps = {
+    layout
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(DefaultMain));

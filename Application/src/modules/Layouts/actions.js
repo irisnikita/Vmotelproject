@@ -3,7 +3,9 @@ export const types = {
     GET_POKEMON: 'GET_POKEMON',
     CHANGE_PATH: 'CHANGE_PATH',
     LAYOUT: 'LAYOUT',
-    TRY_APPLICATION: 'TRY_APPLICATION'
+    TRY_APPLICATION: 'TRY_APPLICATION',
+    GET_BLOCKS: 'GET_BLOCKS',
+    SELECT_BLOCK: 'SELECT_BLOCK'
 };
 
 export function layout(payload) {
@@ -16,6 +18,14 @@ export function userLogin(payload) {
 
 export function changePath(payload) {
     return {type: types.CHANGE_PATH, payload};
+}
+
+export function getBlocks(payload) {
+    return {type:types.GET_BLOCKS, payload};
+}
+
+export function selectBlock(payload) {
+    return {type: types.SELECT_BLOCK, payload};
 }
 
 export function tryApplication(payload) {

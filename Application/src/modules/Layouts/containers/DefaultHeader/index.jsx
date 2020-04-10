@@ -48,7 +48,7 @@ const menu = [
         child: [
             {key: 'blocks', label: 'Khu trọ, khu căn hộ',icon: 'icon-house'},
             {key: 'rooms-motel', label: 'Phòng', icon: 'icon-airline_seat_individual_suite'},
-            {key: 'service', label: 'Dịch vụ', icon: 'icon-room_service'}
+            {key: 'services', label: 'Dịch vụ', icon: 'icon-room_service'}
         ]
     }
 ];

@@ -3,7 +3,7 @@ import {put, takeLatest, call, takeEvery, delay, select} from 'redux-saga/effect
 import {getPokemonSuccess} from 'Layouts/actions';
 
 // Actions 
-import {changePath, userLogin, tryApplication} from './actions';
+import {changePath, userLogin, tryApplication, getBlocks} from './actions';
 
 // Services
 import * as pokemonServices from 'Src/services/pokemon';
@@ -42,6 +42,11 @@ export function* layout({payload}) {
         case 'tryApplication': 
             yield put(tryApplication({
                 isTry: value
+            }));
+            break;
+        case 'getBlocks': 
+            yield put(getBlocks({
+                blocks: value
             }));
             break;
         default:
