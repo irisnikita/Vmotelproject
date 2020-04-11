@@ -2,20 +2,18 @@ const connection = require('../database');
 
 const service = {
     create: (req, callback) => {
-        const { services } = req.body;
-
-        console.log(services)
-        let query = 'INSERT INTO SERVICES (nameService, price, idUnit, description, idBlock) VALUES ?'
-        return connection.query(query, [services.map(service => [service.nameService, service.price, service.idUnit, service.description, service.idBlock])], callback)
+        const { idBlock = '', nameRoom = '', maxPeople, floor, square, price, description = '', status = 0 } = req.body;
+        let query = 'INSERT INTO ROOMS (idBlock, nameRoom, maxPeople, floor, square, price, description, status) VALUES (?,?,?,?,?,?,?,?)'
+        return connection.query(query, [idBlock, nameRoom, maxPeople, floor, square, price, description, status], callback)
     },
     getAll: (req, callback) => {
-        const { idBlock = '' } = req.query;
-        let query = 'SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNIT U ON S.idUnit = U.id WHERE idBlock = ? ';
-        return connection.query(query, [idBlock], callback);
+        // const { idBlock = '' } = req.query;
+        let query = 'SELECT DS.*,U.name FROM DEFAULT_SERVICES as DS INNER JOIN UNIT as U on DS.idUnit = U.id';
+        return connection.query(query, callback);
     },
     delete: (req, callback) => {
         const { id = '' } = req.params;
-        let query = 'DELETE FROM SERVICES WHERE id = ?'
+        let query = 'DELETE FROM ROOMS WHERE id = ?'
 
         return connection.query(query, [id], callback)
     },

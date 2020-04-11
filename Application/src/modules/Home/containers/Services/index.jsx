@@ -12,6 +12,9 @@ import {layout} from 'Layouts/actions';
 // Services
 import * as serviceServices from 'Src/services/servicesMotel';
 
+// Components
+import ModalCreate from './components/ModalCreate';
+
 // Antd
 const {Title} = Typography;
 const {Option} = Select;
@@ -26,6 +29,7 @@ const Services = props => {
     const [selectedRowKeys, setselectedRowKeys] = useState([]);
     const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
     const [services, setServices] = useState([]);
+    const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
 
     const rowSelection = {
         
@@ -72,8 +76,8 @@ const Services = props => {
         },
         {
             title: 'Đơn vị',
-            dataIndex: 'idUnit',
-            key:'idUnit'
+            dataIndex: 'nameUnit',
+            key:'nameUnit'
         },
         {
             title: 'Mô tả',
@@ -132,9 +136,10 @@ const Services = props => {
 
                 const draftServices = services.map(service => ({
                     key: service.id,
+                    edit: service.id,
                     nameService: service.nameService,
                     price: service.price,
-                    idUnit: service.idUnit,
+                    nameUnit: service.nameUnit,
                     description: service.description
                 }));
 
@@ -145,8 +150,20 @@ const Services = props => {
         setIsShowLoadingTable(false);
     };
 
-    const onConfirmRemove = (id) => {
+    const onConfirmRemove = async (id) => {
+        const removeService = await serviceServices.del({
+            id
+        });
 
+        if (removeService) {
+            if (removeService.data && removeService.data.data) {
+                message.success('Xóa dịch vụ thành công!');
+                getServices();
+                
+            } else {
+                message.error('Xóa dịch vụ thất bại');
+            }
+        }
     };
 
     const onClickEdit = (id) => {
@@ -154,11 +171,19 @@ const Services = props => {
     };
 
     const onClickAddNew = () => {
-
+        setIsOpenModalCreate(true);
     };
 
     const onConfirmDelete = () => {
         
+    };
+
+    const toggleModalCreate = () => {
+        setIsOpenModalCreate(!isOpenModalCreate);
+    };
+
+    const callbackModalCreate = () => {
+        getServices();
     };
 
     return (
@@ -213,6 +238,13 @@ const Services = props => {
                     <Table size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={services} />
                 </Row>
             </Spin>
+            <ModalCreate 
+                isOpen={isOpenModalCreate}
+                toggleModal={toggleModalCreate}
+                block={blocks.find(block => block.id === blockSelected)}
+                blockServices={services}
+                callback={callbackModalCreate}
+            />
         </div>
     );
 };
