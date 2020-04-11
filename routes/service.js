@@ -83,7 +83,7 @@ const serviceRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete rooms success',
+                    message: 'Delete Services success',
                     data: {
                         status: 1
                     }

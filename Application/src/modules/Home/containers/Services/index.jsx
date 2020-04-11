@@ -14,6 +14,7 @@ import * as serviceServices from 'Src/services/servicesMotel';
 
 // Components
 import ModalCreate from './components/ModalCreate';
+import ModalUpdate from './components/ModalUpdate';
 
 // Antd
 const {Title} = Typography;
@@ -30,9 +31,16 @@ const Services = props => {
     const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
     const [services, setServices] = useState([]);
     const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
+    const [modalUpdate, setModalUpdate] = useState({
+        isOpen: false,
+        serviceEdited: {}
+    });
 
     const rowSelection = {
-        
+        selectedRowKeys,
+        onChange: (selectedRowsKey) => {
+            setselectedRowKeys(selectedRowsKey);
+        }
     };
 
     const columns = [
@@ -167,15 +175,35 @@ const Services = props => {
     };
 
     const onClickEdit = (id) => {
-
+        if (id) {
+            const serviceEdited = services.find(service=> service.key === id);
+            
+            setModalUpdate({
+                ...modalUpdate,
+                isOpen: true,
+                serviceEdited
+            });
+        }
     };
 
     const onClickAddNew = () => {
         setIsOpenModalCreate(true);
     };
 
-    const onConfirmDelete = () => {
-        
+    const onConfirmDelete = async () => {
+        const deleteAll = await serviceServices.delAll({
+            servicesId: selectedRowKeys
+        });
+
+        if (deleteAll) {
+            if (deleteAll.data && deleteAll.data.data) {
+                message.success('Xóa thành công');
+                setselectedRowKeys([]);
+                getServices();
+            } else {
+                message.error('Xóa thất bại');
+            }
+        }
     };
 
     const toggleModalCreate = () => {
@@ -184,6 +212,10 @@ const Services = props => {
 
     const callbackModalCreate = () => {
         getServices();
+    };
+
+    const toggleModalUpdate = () => {
+        setModalUpdate({...modalUpdate,isOpen: !modalUpdate.isOpen});
     };
 
     return (
@@ -221,7 +253,7 @@ const Services = props => {
                     <Popconfirm
                         disabled={selectedRowKeys.length > 0 ? false : true}
                         placement="bottom"
-                        title={`Bạn có muốn xóa ${selectedRowKeys.length} phòng này?`}
+                        title={`Bạn có muốn xóa ${selectedRowKeys.length} dịch vụ này?`}
                         okText='Xóa'
                         onConfirm={onConfirmDelete}
                         cancelText='Hủy'
@@ -244,6 +276,12 @@ const Services = props => {
                 block={blocks.find(block => block.id === blockSelected)}
                 blockServices={services}
                 callback={callbackModalCreate}
+            />
+            <ModalUpdate
+                isOpen={modalUpdate.isOpen}
+                service={modalUpdate.serviceEdited}
+                block={blocks.find(block => block.id === blockSelected)}
+                toggleModal={toggleModalUpdate}
             />
         </div>
     );

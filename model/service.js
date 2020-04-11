@@ -20,11 +20,11 @@ const service = {
         return connection.query(query, [id], callback)
     },
     deleteAll: (req, callback) => {
-        const { roomsId } = req.body;
+        const { servicesId } = req.body;
 
-        let query = 'DELETE FROM ROOMS WHERE id IN (?)';
+        let query = 'DELETE FROM SERVICES WHERE id IN (?)';
 
-        return connection.query(query, [roomsId], callback)
+        return connection.query(query, [servicesId], callback)
     },
     update: (req, callback) => {
         const { nameRoom, floor, square, price, description, maxPeople } = req.body;

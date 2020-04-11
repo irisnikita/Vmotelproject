@@ -251,6 +251,7 @@ const RoomsMotel = props => {
         if (deleteAll) {
             if (deleteAll.data && deleteAll.data.data) {
                 message.success('Xóa thành công');
+                setselectedRowKeys([]);
                 getDataRooms();
             } else {
                 message.error('Xóa thất bại');
