@@ -1,15 +1,16 @@
 const connection = require('../database');
 
-const service = {
+const unit = {
     create: (req, callback) => {
         const { services } = req.body;
+
+        console.log(services)
         let query = 'INSERT INTO SERVICES (nameService, price, idUnit, description, idBlock) VALUES ?'
         return connection.query(query, [services.map(service => [service.nameService, service.price, service.idUnit, service.description, service.idBlock])], callback)
     },
     getAll: (req, callback) => {
-        const { idBlock = '' } = req.query;
-        let query = 'SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNIT U ON S.idUnit = U.id WHERE idBlock = ? ';
-        return connection.query(query, [idBlock], callback);
+        let query = 'SELECT * FROM UNIT ';
+        return connection.query(query, callback);
     },
     delete: (req, callback) => {
         const { id = '' } = req.params;
@@ -25,11 +26,11 @@ const service = {
         return connection.query(query, [servicesId], callback)
     },
     update: (req, callback) => {
-        const { price, idUnit, description } = req.body;
+        const { nameRoom, floor, square, price, description, maxPeople } = req.body;
         const { id = '' } = req.params;
-        let query = 'UPDATE SERVICES SET price = ?, idUnit = ?, description = ? WHERE id = ?'
+        let query = 'UPDATE ROOMS SET nameRoom = ?, floor = ?, square = ?, price = ?, description = ?, maxPeople = ? WHERE id = ?'
 
-        return connection.query(query, [price, idUnit, description, id], callback)
+        return connection.query(query, [nameRoom, floor, square, price, description, maxPeople, id], callback)
     },
     get: (id, callback) => {
         let query = 'SELECT * FROM USERS WHERE id = ?';
@@ -37,4 +38,4 @@ const service = {
     }
 }
 
-module.exports = service;
+module.exports = unit;

@@ -1,35 +1,35 @@
 // router
 const express = require('express');
-const serviceRouters = express.Router();
+const defaultServiceRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 
 // Model
-const serviceModel = require('../model/service');
+const defaultServiceModel = require('../model/defaultService');
 
-const serviceRouter = (app) => {
+const defaultServiceRouter = (app) => {
 
-    serviceRouters.use(authMiddleware.isAuth)
+    defaultServiceRouters.use(authMiddleware.isAuth)
 
-    serviceRouters.get('/get-services', (req, res) => {
-        serviceModel.getAll(req, (err, rows) => {
+    defaultServiceRouters.get('/get-default-services', (req, res) => {
+        defaultServiceModel.getAll(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
                     message: 'Get services success',
                     data: {
-                        services: rows
+                        defaultServices: rows
                     }
                 })
             }
         })
     })
 
-    serviceRouters.post('/create', (req, res) => {
-        serviceModel.create(req, (err, rows) => {
+    defaultServiceRouters.post('/create', (req, res) => {
+        defaultServiceModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Create Services success',
+                    message: 'Create rooms success',
                     data: {
                         status: 1
                     }
@@ -42,12 +42,12 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.delete('/delete/:id', (req, res) => {
-        serviceModel.delete(req, (err, rows) => {
+    defaultServiceRouters.delete('/delete/:id', (req, res) => {
+        defaultServiceModel.delete(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete service success',
+                    message: 'Delete room success',
                     data: {
                         status: 1
                     }
@@ -60,12 +60,12 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.put('/update/:id', (req, res) => {
-        serviceModel.update(req, (err, rows) => {
+    defaultServiceRouters.put('/update/:id', (req, res) => {
+        defaultServiceModel.update(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Update service success',
+                    message: 'Update room success',
                     data: {
                         status: 1
                     }
@@ -78,12 +78,12 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.post('/delete-all', (req, res) => {
-        serviceModel.deleteAll(req, (err, rows) => {
+    defaultServiceRouters.post('/delete-all', (req, res) => {
+        defaultServiceModel.deleteAll(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete Services success',
+                    message: 'Delete rooms success',
                     data: {
                         status: 1
                     }
@@ -96,7 +96,7 @@ const serviceRouter = (app) => {
         })
     })
 
-    app.use('/service', serviceRouters);
+    app.use('/default-service', defaultServiceRouters);
 }
 
-module.exports = serviceRouter;
+module.exports = defaultServiceRouter;
