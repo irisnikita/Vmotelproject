@@ -145,6 +145,7 @@ const Services = props => {
                 const draftServices = services.map(service => ({
                     key: service.id,
                     edit: service.id,
+                    idUnit: service.idUnit,
                     nameService: service.nameService,
                     price: service.price,
                     nameUnit: service.nameUnit,
@@ -218,6 +219,10 @@ const Services = props => {
         setModalUpdate({...modalUpdate,isOpen: !modalUpdate.isOpen});
     };
 
+    const callbackModalUpdate = () => {
+        getServices();
+    };
+
     return (
         <div style={{padding: 10}}>
             <Row>
@@ -282,6 +287,7 @@ const Services = props => {
                 service={modalUpdate.serviceEdited}
                 block={blocks.find(block => block.id === blockSelected)}
                 toggleModal={toggleModalUpdate}
+                callback={callbackModalUpdate}
             />
         </div>
     );

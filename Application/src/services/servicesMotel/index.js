@@ -14,5 +14,5 @@ export function delAll(params) {
     return services.create({...params,API: appConfig.API + '/service/delete-all'});
 }
 export function update(params) {
-    return services.update({...params,API: appConfig.API + '/room/update'});
+    return services.update({...params,API: appConfig.API + '/service/update'});
 }

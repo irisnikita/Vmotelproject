@@ -1,31 +1,31 @@
 // router
 const express = require('express');
-const serviceRouters = express.Router();
+const unitRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 
 // Model
-const serviceModel = require('../model/service');
+const unitModel = require('../model/unit');
 
-const serviceRouter = (app) => {
+const unitRouter = (app) => {
 
-    serviceRouters.use(authMiddleware.isAuth)
+    unitRouters.use(authMiddleware.isAuth)
 
-    serviceRouters.get('/get-services', (req, res) => {
-        serviceModel.getAll(req, (err, rows) => {
+    unitRouters.get('/get-units', (req, res) => {
+        unitModel.getAll(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Get services success',
+                    message: 'Get units success',
                     data: {
-                        services: rows
+                        units: rows
                     }
                 })
             }
         })
     })
 
-    serviceRouters.post('/create', (req, res) => {
-        serviceModel.create(req, (err, rows) => {
+    unitRouters.post('/create', (req, res) => {
+        unitModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -42,8 +42,8 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.delete('/delete/:id', (req, res) => {
-        serviceModel.delete(req, (err, rows) => {
+    unitRouters.delete('/delete/:id', (req, res) => {
+        unitModel.delete(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -60,12 +60,12 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.put('/update/:id', (req, res) => {
-        serviceModel.update(req, (err, rows) => {
+    unitRouters.put('/update/:id', (req, res) => {
+        unitModel.update(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Update service success',
+                    message: 'Update room success',
                     data: {
                         status: 1
                     }
@@ -78,8 +78,8 @@ const serviceRouter = (app) => {
         })
     })
 
-    serviceRouters.post('/delete-all', (req, res) => {
-        serviceModel.deleteAll(req, (err, rows) => {
+    unitRouters.post('/delete-all', (req, res) => {
+        unitModel.deleteAll(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -96,7 +96,7 @@ const serviceRouter = (app) => {
         })
     })
 
-    app.use('/service', serviceRouters);
+    app.use('/unit', unitRouters);
 }
 
-module.exports = serviceRouter;
+module.exports = unitRouter;
