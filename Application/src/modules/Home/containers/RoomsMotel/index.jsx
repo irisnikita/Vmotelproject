@@ -209,7 +209,6 @@ const RoomsMotel = props => {
         
         setBlockSelected(value);
         
-        getDataRooms();
     };
 
     const getDataRooms = async () => {
