@@ -5,6 +5,7 @@ const Rooms = React.lazy(() => import('Src/modules/Home/containers/Rooms'));
 const Blocks = React.lazy(() => import('Src/modules/Home/containers/Blocks'));
 const RoomsMotel = React.lazy(() => import('Src/modules/Home/containers/RoomsMotel'));
 const Services = React.lazy(() => import('Src/modules/Home/containers/Services'));
+const Customers = React.lazy(() => import('Src/modules/Home/containers/Customers'));
 
 export default [
     {
@@ -44,5 +45,12 @@ export default [
         exact: true,
         name: 'Services',
         component: Services
+    },
+    {
+        state: 'customers',
+        path: '/customers',
+        exact: true,
+        name: 'Customers',
+        component: Customers
     }
 ];

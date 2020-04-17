@@ -4,6 +4,7 @@ import {Layout, Button, Avatar, Menu, Divider, Popover, Dropdown} from 'antd';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import motion from 'framer-motion';
 
 // Icon
 import {DingtalkOutlined, BarsOutlined} from '@ant-design/icons';
@@ -39,7 +40,10 @@ const menu = [
     {
         key: 'contract',
         label: 'Hợp đồng',
-        icon: 'icon-content_paste'
+        icon: 'icon-content_paste',
+        child: [
+            {key: 'customers', label: 'Khách thuê',icon: 'icon-supervised_user_circle'}
+        ]
     },
     {
         key: 'motel',
@@ -117,8 +121,10 @@ class DefaultHeader extends Component {
                     {item.child.map(child => (
                         <Menu.Item key={child.key} onClick={()=>this.onClickItem(child.key)}>
                             <Link to={`/${child.key}`}>
-                                <i className={child.icon} /> &nbsp;
-                                {child.label}
+                                <div className='flex-row' >
+                                    <i className={child.icon} style={{fontSize: 15}} /> &nbsp;
+                                    {child.label}
+                                </div>
                             </Link>
                         </Menu.Item>
                     ))}
