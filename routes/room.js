@@ -5,6 +5,7 @@ const authMiddleware = require('../Middleware/AuthMiddleware');
 
 // Model
 const roomModel = require('../model/room');
+const roomImageModel = require('../model/roomImage');
 
 const roomRouter = (app) => {
 
@@ -86,6 +87,60 @@ const roomRouter = (app) => {
                     message: 'Delete rooms success',
                     data: {
                         status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
+
+    roomRouters.post('/uploadImage', (req, res) => {
+        roomImageModel.create(req, (err, rows, fields) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Upload images success',
+                    data: {
+                        status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
+
+    roomRouters.get('/get-images', (req, res) => {
+        roomImageModel.getAll(req, (err, rows, fields) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'get images success',
+                    data: {
+                        images: rows
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
+
+    roomRouters.post('/delete-images', (req, res) => {
+        roomImageModel.deleteAll(req, (err, rows, fields) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Delete images success',
+                    data: {
+                        images: rows
                     }
                 })
             } else {

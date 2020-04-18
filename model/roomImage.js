@@ -2,14 +2,14 @@ const connection = require('../database');
 
 const Room = {
     create: (req, callback) => {
-        const { idBlock = '', nameRoom = '', maxPeople, floor, square, price, description = '', status = 0, codeRoom = '' } = req.body;
-        let query = 'INSERT INTO ROOMS (idBlock, nameRoom, maxPeople, floor, square, price, description, status, codeRoom) VALUES (?,?,?,?,?,?,?,?,?)'
-        return connection.query(query, [idBlock, nameRoom, maxPeople, floor, square, price, description, status, codeRoom], callback)
+        const { roomImages } = req.body;
+        let query = 'INSERT INTO ROOM_IMAGES (name, status, url, codeRoom) VALUES ?'
+        return connection.query(query, [roomImages.map(roomImage => [roomImage.name, roomImage.status, roomImage.url, roomImage.codeRoom])], callback)
     },
     getAll: (req, callback) => {
-        const { idBlock = '' } = req.query;
-        let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
-        return connection.query(query, [idBlock], callback);
+        const { codeRoom = '' } = req.query;
+        let query = 'SELECT * FROM ROOM_IMAGES WHERE codeRoom = ? ';
+        return connection.query(query, [codeRoom], callback);
     },
     delete: (req, callback) => {
         const { id = '' } = req.params;
@@ -18,11 +18,11 @@ const Room = {
         return connection.query(query, [id], callback)
     },
     deleteAll: (req, callback) => {
-        const { roomsId } = req.body;
+        const { codeRoom } = req.body;
 
-        let query = 'DELETE FROM ROOMS WHERE id IN (?)';
+        let query = 'DELETE FROM ROOM_IMAGES WHERE codeRoom = ?';
 
-        return connection.query(query, [roomsId], callback)
+        return connection.query(query, [codeRoom], callback)
     },
     update: (req, callback) => {
         const { nameRoom, floor, square, price, description, maxPeople } = req.body;

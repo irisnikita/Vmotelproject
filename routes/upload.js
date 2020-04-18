@@ -26,6 +26,28 @@ const uploadRouter = (app) => {
         })
     })
 
+    uploadRouters.post('/rooms', (req, res) => {
+        const storage = multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, 'public/images/rooms')
+            },
+            filename: (req, file, cb) => {
+                cb(null, Date.now() + '-' + file.originalname)
+            }
+        })
+        const upload = multer({ storage }).single('file');
+
+        upload(req, res, (err) => {
+            if (err instanceof multer.MulterError) {
+                return res.status(500).json(err)
+            } else if (err) {
+                return res.status(500).json(err)
+            } else {
+                return res.status(200).send(req.file)
+            }
+        })
+    })
+
     app.use('/upload', uploadRouters)
 
 }

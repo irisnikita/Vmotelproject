@@ -2,7 +2,8 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select} from 'antd';
+import moment from 'moment';
+import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select, Avatar} from 'antd';
 
 // Actions
 import {layout} from 'Layouts/actions';
@@ -157,6 +158,21 @@ const Customers = props => {
         setBlockSelected(value);
     };
 
+    const showRenderInfoUser = (key, value) => {
+        switch (key) {
+            case 'sex':
+                return value === 'male' ? 'Nam' : 'Nữ';
+            case 'dateBirth':
+                return moment(value, 'YYYY-MM-DD').format('DD/MM/YYYY');
+        
+            case 'tempReg':
+                return value === 1 ? 'Có' : 'Không';
+        
+            default:
+                return value;
+        }
+    };
+
     return (
         <div style={{padding: 10}}>
             <Row>
@@ -214,8 +230,10 @@ const Customers = props => {
                         dataSource={customers}
                         expandable={{
                             expandedRowRender: records => <Row>
-                                <Col xs={{span: 24}} md={{span: 8}}>Hello</Col>
-                                <Col xs={{span: 24}} md={{span: 12}}>
+                                <Col xs={{span: 24}} md={{span: 4}} className='flex-row-center'>
+                                    <Avatar size={100} src={records.avatar} />
+                                </Col>
+                                <Col xs={{span: 24}} md={{span: 16}}>
                                     <Row>
                                         {
                                             Object.keys(records).length > 0 ?
@@ -225,7 +243,7 @@ const Customers = props => {
                                                     if (!isHide) {
                                                         return <Col span='12' key={record}>
                                                             <strong>{fortmatName(record)}:</strong> &nbsp;
-                                                            {records[record]}
+                                                            {showRenderInfoUser(record, records[record])}
                                                         </Col>;
                                                     }
                                                 }) : null

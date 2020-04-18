@@ -1,10 +1,12 @@
 // Libraries
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select, Input, InputNumber} from 'antd';
 import axios from 'axios';
 import numeral from 'numeral';
+import Highlighter from 'react-highlight-words';
+import {SearchOutlined} from '@ant-design/icons';
 
 // Actions
 import {layout} from 'Layouts/actions';
@@ -34,6 +36,9 @@ const RoomsMotel = props => {
     });
     const [selectedRowKeys, setselectedRowKeys] = useState([]);
     const [isOpenAddMoreRoom, setIsOpenAddMoreRoom] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
 
     const rowSelection = {
         selectedRowKeys,
@@ -42,12 +47,73 @@ const RoomsMotel = props => {
         }
     };
 
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex, name) => ({
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${name}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{width: 90, marginRight: 8}}
+                >
+              Search
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
+              Reset
+                </Button>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}} />,
+        onFilter: (value, record) =>
+            record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+                setTimeout(() => searchInput.select());
+            }
+        },
+        render: text =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text.toString()}
+                />
+            ) : (
+                text
+            )
+    });
+
     const columns = [
         {
             title: '',
             dataIndex: 'edit',
             key:'edit',
             width: 100,
+            
             render: (id)=> <div className='flex-row-center'>
                 <Tooltip title='Sửa'>
                     <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
@@ -76,6 +142,7 @@ const RoomsMotel = props => {
         {
             title: 'Tên phòng',
             dataIndex: 'nameRoom',
+            ...getColumnSearchProps('nameRoom', 'Tên phòng'),
             key:'nameRoom'
         },
         {
@@ -232,7 +299,8 @@ const RoomsMotel = props => {
                     price: room.price,
                     description: room.description,
                     maxPeople: room.maxPeople,
-                    status: room.status
+                    status: room.status,
+                    codeRoom: room.codeRoom
                 }));
 
                 setRooms(draftRooms);
@@ -334,7 +402,7 @@ const RoomsMotel = props => {
             </Row>
             <Spin spinning={isShowLoadingTable} tip='Loading...'>
                 <Row style={{paddingTop: '10px'}}>
-                    <Table size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={rooms} />
+                    <Table bordered size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={rooms} />
                 </Row>
             </Spin>
             <RoomModal
