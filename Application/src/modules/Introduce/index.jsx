@@ -79,7 +79,6 @@ class Introduce extends Component {
                                         <div onClick={this.onClickTry} className='button-intro animated infinite tada slow'>
                          Dùng thử miễn phí
                                         </div>
-                         
                                     </ScrollAnimation>
                                 </Col>
                                 <Col xs={{span: 24, offset: 0}} md={{span: 8, offset: 2}} style={{padding: '0px 10px'}}>

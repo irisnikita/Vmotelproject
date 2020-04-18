@@ -5,11 +5,18 @@ import {Modal, Typography, Form, Input, Button, message, Row, Col, InputNumber} 
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
+// Components
+import UploadImage from 'Src/components/UploadImage';
+
 // Antd
 const {TextArea} = Input;
 
+// Constanst
+import {appConfig} from 'Src/constant';
+
 // Services
 import * as roomServices from 'Src/services/room';
+import moment from 'moment';
 
 const RoomsMotel = props => {
     const [form] = Form.useForm();
@@ -19,17 +26,29 @@ const RoomsMotel = props => {
 
     // State
     const [isShowLoading, setIsShowLoading] = useState(false);
-    
+    const [imagesEdited, setImagesEdited] = useState([]);
+    const [images, setImages] = useState([]);
+
     const layout = {
         labelCol: {
             xs: {span: 24},
-            md: {span: 9}
+            md: {span: 24}
         },
         wrapperCol: {
             xs: {span: 24},
-            md: {span: 15}
+            md: {span: 24}
         }
     };
+
+    useEffect(() => {
+        if (!_.isEmpty(roomEdited)) {
+            if (roomEdited.codeRoom) {
+                getRoomImages(roomEdited.codeRoom);
+            }
+        } else {
+            setImagesEdited([]);
+        }
+    }, [roomEdited]);
 
     useEffect(() => {
         if (isOpen === true) {
@@ -55,6 +74,28 @@ const RoomsMotel = props => {
         }
     }, [isOpen, roomEdited]);
 
+    const getRoomImages = async (codeRoom) => {
+        if (codeRoom) {
+            const getRoomImages = await roomServices.getImages({
+                codeRoom
+            });
+
+            if (getRoomImages) {
+                if (getRoomImages.data && getRoomImages.data.data) {
+                    let {images} = getRoomImages.data.data;
+
+                    images = images.map(image => ({
+                        uid: image.id,
+                        name: image.name,
+                        status: image.status,
+                        url: image.url
+                    }));
+                    setImagesEdited(images || []);
+                }
+            }
+        }
+    };
+
     const onFinishForm = (value) =>{
         if (_.isEmpty(roomEdited)) {
             createRoom(value);
@@ -73,9 +114,31 @@ const RoomsMotel = props => {
 
         if (updateRoom) {
             if (updateRoom.data && updateRoom.data.data) {
+                const delImages = await roomServices.delAllImage({
+                    codeRoom: roomEdited.codeRoom
+                });
+
+                if (delImages) {
+                    if (delImages.data && delImages.data.data) {
+                        const newImages = images.map(image => ({
+                            name: image.response ? image.response.filename : image.name,
+                            url: image.response ? `${appConfig.API}/${image.response.path}` : image.url,
+                            status: image.status,
+                            codeRoom: roomEdited.codeRoom
+                        }));
+        
+                        if (newImages.length > 0) {
+                            await roomServices.uploadImage({
+                                roomImages: newImages || []
+                            });
+                        }
+                    }
+                }
+               
                 message.success('Cập nhật phòng thành công');
                 toggleModal();
                 callback();
+               
             } else {
                 message.error('Cập nhật phòng thất bại');
             }
@@ -84,10 +147,13 @@ const RoomsMotel = props => {
     };
 
     const createRoom = async (room) => {
+        const codeRoom = moment().unix();
+
         let draftRoom = {
             ...room,
             nameBlock: '',
             idBlock: block.id,
+            codeRoom,
             status: 0
         };
 
@@ -99,6 +165,25 @@ const RoomsMotel = props => {
 
         if (createRoom) {
             if (createRoom.data && createRoom.data.data) {
+                const newImages = images.map(image => ({
+                    name: image.response ? image.response.filename : image.name,
+                    url: image.response ? `${appConfig.API}/${image.response.path}` : image.url,
+                    status: image.status,
+                    codeRoom
+                }));
+
+                if (newImages.length > 0) {
+                    await roomServices.uploadImage({
+                        roomImages: newImages
+                    });
+    
+                    // if (uploadImage) {
+                    //     if (uploadImage.data && uploadImage.data.data) {
+                    //         //
+                    //     }
+                    // }
+                }
+
                 message.success('Tạo phòng thành công');
                 toggleModal();
                 callback();
@@ -124,9 +209,13 @@ const RoomsMotel = props => {
         toggleModal();
     };
 
+    const callbackUploadImage = (listImages) => {
+        setImages(listImages);
+    };
+
     return (
         <Modal
-            width={1000}
+            width={700}
             title={<div className='flex-row' style={{fontSize: 20, color: '#08979c'}}>
                 <i className={type === 'create' ? 'icon-add' : 'icon-createmode_editedit'} /> &nbsp;
                 <strong >{title}</strong>
@@ -139,7 +228,7 @@ const RoomsMotel = props => {
             onCancel={onCanceModal}
             footer={null}
         >
-            <Form form={form} {...layout} name='form-block' onFinish={onFinishForm}>
+            <Form form={form} {...layout} name='form-block' onFinish={onFinishForm} labelAlign='left'>
                 <Row>
                     <Col xs={{span: 24}} md={{span: 12}}>
                         <Form.Item
@@ -219,12 +308,6 @@ const RoomsMotel = props => {
                 <Row>
                     <Col span={24}>
                         <Form.Item
-                            wrapperCol={{
-                                md: {span: 20}
-                            }}
-                            labelCol={{
-                                md: {span: 4}
-                            }}
                             label='Mô tả'
                             name='description'
                         >
@@ -232,6 +315,11 @@ const RoomsMotel = props => {
                         </Form.Item>
                     </Col>
                 </Row>
+                <Form.Item
+                    label='Tải ảnh phòng'
+                >
+                    <UploadImage callback={callbackUploadImage} imagesEdited={imagesEdited} isOpen={isOpen} />
+                </Form.Item>
                 <Form.Item 
                     wrapperCol={{
                         md: {span: 8, offset: 16}

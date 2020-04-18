@@ -91,6 +91,8 @@ class Home extends Component {
                         />
                     </div>
                 </div>
+                <Divider orientation="left">Còn trống</Divider>
+                <Row />
             </div>
         );
     }
