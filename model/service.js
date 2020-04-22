@@ -8,7 +8,7 @@ const service = {
     },
     getAll: (req, callback) => {
         const { idBlock = '' } = req.query;
-        let query = 'SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNIT U ON S.idUnit = U.id WHERE idBlock = ? ';
+        let query = 'SELECT S.*, U.name nameUnit FROM SERVICES S INNER JOIN UNITS U ON S.idUnit = U.id WHERE idBlock = ? ';
         return connection.query(query, [idBlock], callback);
     },
     delete: (req, callback) => {

@@ -11,21 +11,27 @@ import {layout} from 'Layouts/actions';
 // Services
 import * as customerServices from 'Src/services/customer';
 
+// Components
+import CustomerModal from './components/CustomerModal';
+
 // Utils
 import {fortmatName} from 'Src/utils';
 
 const {Title} = Typography;
 const {Option} = Select;
 
-const hideField = ['id', 'key', 'actions', 'userName', 'pass', 'identifyFront', 'identifyBack', 'role', 'province', 'avatar', 'idOwner'];
+const hideField = ['id', 'key', 'actions', 'userName', 'pass', 'identifyFront', 'identifyBack', 'role', 'province', 'avatar', 'idOwner', 'address'];
 
 const Customers = props => {
     // Props
     const {layout, blocks} = props;
     const [selectedRowKeys, setselectedRowKeys] = useState([]);
-    const [blockSelected, setBlockSelected] = useState([]);
     const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
     const [customers, setCustomers] = useState([]);
+    const [customerModal, setCustomerModal] = useState({
+        isOpen: false,
+        customerEdited: {}
+    });
 
     const rowSelection = {
         selectedRowKeys,
@@ -93,6 +99,8 @@ const Customers = props => {
     }, []);
 
     const getDataCustomers = async() => {
+        setIsShowLoadingTable(true);
+
         const getCustomers = await customerServices.getList();
 
         if (getCustomers) {
@@ -108,14 +116,32 @@ const Customers = props => {
                 setCustomers(customers);
             }
         }
+
+        setIsShowLoadingTable(false);
     };
 
-    const onConfirmRemove = (id) => {
+    const onConfirmRemove = async (id) => {
+        const removeCustomer = await customerServices.del({
+            id
+        });
 
+        if (removeCustomer) {
+            if (removeCustomer.data && removeCustomer.data.data) {
+                message.success('Xóa khách hàng thành công');
+                
+                getDataCustomers();
+            }
+        }
     };
 
-    const onClickEdit = () => {
+    const onClickEdit = (id) => {
+        const customerEdited = customers.find(customer => customer.id === id);
 
+        setCustomerModal({
+            ...customerEdited,
+            isOpen: true,
+            customerEdited
+        });
     };
 
     useEffect(() => {
@@ -126,36 +152,27 @@ const Customers = props => {
         
     }, []);
 
-    useEffect(()=>{
-        if (blocks.length > 0) {
-
-            // had block in list
-            let isHaded = blocks.some(block => block.id === +localStorage.getItem('blockSelected'));
-
-            if (localStorage.getItem('blockSelected') && isHaded) {
-                const defaultBlock = localStorage.getItem('blockSelected');
-    
-                setBlockSelected(+defaultBlock);
-            } else {
-                setBlockSelected(blocks[0].id);
-            }
-
-        }
-
-    },[blocks]);
-
     const onClickAddNew = () => {
-
+        setCustomerModal({
+            ...customerModal,
+            isOpen: true,
+            customerEdited: {}
+        });
     };
 
-    const onConfirmDelete = () => {
+    const onConfirmDelete = async () => {
+        const deleteCustomers = await customerServices.delAll({
+            customersId: selectedRowKeys
+        });
 
-    };
-
-    const onChangeBlocks = (value) => {
-        localStorage.setItem('blockSelected',value);
-        
-        setBlockSelected(value);
+        if (deleteCustomers) {
+            if (deleteCustomers.data && deleteCustomers.data.data) {
+                message.success('Xóa các khách hàng thành công!');
+                getDataCustomers();
+            } else {
+                message.error('Xóa các khách hàng thất bại!');
+            }
+        }
     };
 
     const showRenderInfoUser = (key, value) => {
@@ -163,7 +180,7 @@ const Customers = props => {
             case 'sex':
                 return value === 'male' ? 'Nam' : 'Nữ';
             case 'dateBirth':
-                return moment(value, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                return moment(value).format('DD/MM/YYYY');
         
             case 'tempReg':
                 return value === 1 ? 'Có' : 'Không';
@@ -173,6 +190,10 @@ const Customers = props => {
         }
     };
 
+    const callbackCustomerModal = () => {
+        getDataCustomers();
+    };
+
     return (
         <div style={{padding: 10}}>
             <Row>
@@ -180,27 +201,6 @@ const Customers = props => {
                     <Title level={4}>QUẢN LÝ KHÁCH THUÊ</Title>
                 </Col>
                 <Col xs={{span: 24, offset: 0}} md={{span: 12, offset: 0}} className='flex-row' style={{justifyContent: 'flex-end'}}>
-                    <Select
-                        showSearch
-                        value={blockSelected}
-                        style={{width: 200}}
-                        placeholder="Chọn khu trọ"
-                        onChange={onChangeBlocks}
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        {
-                            blocks.map(block =>(
-                                <Option key={block.id} value={block.id}>{block.nameBlock}</Option>
-                            ))
-                        }
-                    </Select>
-                </Col>
-            </Row>
-            <Row style={{marginTop: 20}}>
-                <Col xs={{span: 24}} md={{span: 24}} className='flex-row' style={{justifyContent: 'flex-end'}}>
                     <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' onClick={onClickAddNew} >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
@@ -255,6 +255,12 @@ const Customers = props => {
                     />
                 </Row>
             </Spin>
+            <CustomerModal 
+                customerEdited={customerModal.customerEdited}
+                callback={callbackCustomerModal}
+                isOpen={customerModal.isOpen}
+                toggle={() => {setCustomerModal({...customerModal, isOpen: !customerModal.isOpen})}} 
+            />
         </div>
     );
 };

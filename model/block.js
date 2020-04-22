@@ -20,7 +20,6 @@ const Block = {
     deleteAll: (req, callback) => {
         const { blocksId } = req.body;
 
-        console.log(blocksId)
         let query = 'DELETE FROM BLOCKS WHERE id IN (?)';
 
         return connection.query(query, [blocksId], callback)

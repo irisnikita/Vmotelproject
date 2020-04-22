@@ -1,7 +1,7 @@
 // Libraries
 import React, {Component} from 'react';
 import {Layout, Button, Avatar, Menu, Divider, Popover, Dropdown} from 'antd';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import motion from 'framer-motion';
@@ -153,6 +153,8 @@ class DefaultHeader extends Component {
             type: 'logout',
             value: {}
         });
+        this.props.history.push('/');
+
         localStorage.removeItem('userInfo');
     }
 
@@ -274,4 +276,4 @@ const mapDispatchTopProps = {
     layout
 };
 
-export default connect(mapStateToProps, mapDispatchTopProps)(DefaultHeader);
+export default withRouter(connect(mapStateToProps, mapDispatchTopProps)(DefaultHeader));
