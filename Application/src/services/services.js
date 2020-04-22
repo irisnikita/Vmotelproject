@@ -60,6 +60,18 @@ export const services =  {
             return false;
         }
     },
+    upload: function create(params) {
+        if (typeof(params.API) !== undefined) {
+            const API = params.API;
+
+            delete params.API;
+
+            return axios.post(API, params.formData);
+
+        } else {
+            return false;
+        }
+    },
     del: function del(params) {
         if (typeof params.API !== 'undefined') {
             const API = params.API;

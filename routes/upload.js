@@ -6,7 +6,7 @@ const multer = require('multer');
 const uploadRouter = (app) => {
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'public/images')
+            cb(null, 'public/images/avatars')
         },
         filename: (req, file, cb) => {
             cb(null, Date.now() + '-' + file.originalname)
@@ -21,7 +21,11 @@ const uploadRouter = (app) => {
             } else if (err) {
                 return res.status(500).json(err)
             } else {
-                return res.status(200).send(req.file)
+                return res.status(200).send({
+                    status: res.statusCode,
+                    message: 'Upload avatar success',
+                    data: req.file
+                })
             }
         })
     })

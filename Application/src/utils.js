@@ -1,3 +1,5 @@
+import {message} from 'antd'; 
+
 export const fortmatName = (key) => {
     if (key && typeof key === 'string') {
         switch (key) {
@@ -27,8 +29,38 @@ export const fortmatName = (key) => {
                 return 'Name';
             case 'female':
                 return 'Nữ';
+            case 'note':
+                return 'Ghi chú';
+            case 'identifyFront':
+                return 'Ảnh cmnd mặt trước';
+            case 'identifyBack':
+                return 'Ảnh cmnd mặt sau';
             default:
                 return '';
         }
     }
 };
+
+export function beforeUpload(file) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+
+    if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+}
+
+export function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}

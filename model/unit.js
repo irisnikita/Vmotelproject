@@ -9,7 +9,7 @@ const unit = {
         return connection.query(query, [services.map(service => [service.nameService, service.price, service.idUnit, service.description, service.idBlock])], callback)
     },
     getAll: (req, callback) => {
-        let query = 'SELECT * FROM UNIT ';
+        let query = 'SELECT * FROM UNITS ';
         return connection.query(query, callback);
     },
     delete: (req, callback) => {

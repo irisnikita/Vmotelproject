@@ -6,8 +6,7 @@ const Room = {
         let query = 'INSERT INTO ROOM_IMAGES (name, status, url, codeRoom) VALUES ?'
         return connection.query(query, [roomImages.map(roomImage => [roomImage.name, roomImage.status, roomImage.url, roomImage.codeRoom])], callback)
     },
-    getAll: (req, callback) => {
-        const { codeRoom = '' } = req.query;
+    getAll: (codeRoom, callback) => {
         let query = 'SELECT * FROM ROOM_IMAGES WHERE codeRoom = ? ';
         return connection.query(query, [codeRoom], callback);
     },

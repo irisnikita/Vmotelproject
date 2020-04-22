@@ -12,7 +12,8 @@ const roomRouter = (app) => {
     roomRouters.use(authMiddleware.isAuth)
 
     roomRouters.get('/get-rooms', (req, res) => {
-        roomModel.getAll(req, (err, rows) => {
+        roomModel.getAll(req, async (err, rows, fields) => {
+
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -23,6 +24,7 @@ const roomRouter = (app) => {
                 })
             }
         })
+
     })
 
     roomRouters.post('/create', (req, res) => {
@@ -116,7 +118,7 @@ const roomRouter = (app) => {
     })
 
     roomRouters.get('/get-images', (req, res) => {
-        roomImageModel.getAll(req, (err, rows, fields) => {
+        roomImageModel.getAll(req.query.codeRoom, (err, rows, fields) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,

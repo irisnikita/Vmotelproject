@@ -7,7 +7,6 @@ const User = {
         return connection.query(query, [req.body.userName], callback)
     },
     register: (req, callback) => {
-        console.log(req.body);
         const { body = {} } = req;
         const { fullName, sex, userName, email, province, address, pass, role } = body;
 

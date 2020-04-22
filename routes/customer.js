@@ -29,7 +29,7 @@ const customRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Create rooms success',
+                    message: 'Create customer success',
                     data: {
                         status: 1
                     }
@@ -47,14 +47,14 @@ const customRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete room success',
+                    message: 'Delete customer success',
                     data: {
                         status: 1
                     }
                 })
             } else {
                 res.send({
-                    message: 'Can\'t delete room success'
+                    message: err
                 })
             }
         })
@@ -65,7 +65,7 @@ const customRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Update room success',
+                    message: 'Update customer success',
                     data: {
                         status: 1
                     }
@@ -83,7 +83,7 @@ const customRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete rooms success',
+                    message: 'Delete customer success',
                     data: {
                         status: 1
                     }
