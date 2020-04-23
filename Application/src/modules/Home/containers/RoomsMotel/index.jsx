@@ -32,7 +32,9 @@ const RoomsMotel = props => {
     const [rooms, setRooms] = useState([]);
     const [roomModal, setRoomModal] = useState({
         isOpen: false,
-        roomEdited: {}
+        roomEdited: {},
+        title: 'Tạo mới',
+        type: 'create'
     });
     const [selectedRowKeys, setselectedRowKeys] = useState([]);
     const [isOpenAddMoreRoom, setIsOpenAddMoreRoom] = useState(false);
@@ -251,7 +253,9 @@ const RoomsMotel = props => {
         setRoomModal({
             ...roomModal,
             isOpen: true,
-            roomEdited: room
+            roomEdited: room,
+            title: 'Chỉnh sửa',
+            type: 'edit'
         });
     };
 
@@ -332,7 +336,9 @@ const RoomsMotel = props => {
         setRoomModal({
             ...roomModal,
             isOpen: true,
-            roomEdited: {}
+            roomEdited: {},
+            title: 'Tạo mới',
+            type: 'create'
         });
     };
 
@@ -409,6 +415,8 @@ const RoomsMotel = props => {
             </Spin>
             <RoomModal
                 roomEdited={roomModal.roomEdited}
+                title = {roomModal.title}
+                type = {roomModal.type}
                 block={blocks.find(block => block.id === blockSelected)}
                 isOpen={roomModal.isOpen}
                 toggleModal={toggleRoomModal}

@@ -38,12 +38,13 @@ const menu = [
         icon: 'icon-money'
     },
     {
-        key: 'contract',
+        key: 'contracts', 
         label: 'Hợp đồng',
-        icon: 'icon-content_paste',
-        child: [
-            {key: 'customers', label: 'Khách thuê',icon: 'icon-supervised_user_circle'}
-        ]
+        icon: 'icon-content_paste'},
+    {
+        key: 'customers',
+        label: 'Khách thuê',
+        icon: 'icon-supervised_user_circle'
     },
     {
         key: 'motel',
@@ -131,8 +132,10 @@ class DefaultHeader extends Component {
                 </SubMenu>;
             } else {
                 return <Menu.Item key={item.key} onClick={()=>this.onClickItem(item.key)}>
-                    <i className={item.icon} /> &nbsp;
-                    {item.label}
+                    <Link to={`/${item.key}`}>
+                        <i className={item.icon} /> &nbsp;
+                        {item.label}
+                    </Link>
                 </Menu.Item>;
             }
         });
@@ -272,8 +275,8 @@ function mapStateToProps (state) {
     };
 }
 
-const mapDispatchTopProps = {
+const mapDispatchToProps = {
     layout
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchTopProps)(DefaultHeader));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DefaultHeader));
