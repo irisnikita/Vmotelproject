@@ -32,9 +32,11 @@ const ModalContract = props => {
 
     const [formContract, setFormContract] = useState({
         idSlave: '',
-        startDate: '',
-        endDate: ''
+        startDate: moment().format('YYYY-MM-DD'),
+        endDate: moment().add(1, 'month').format('YYYY-MM-DD'),
+        circlePay: 1
     });
+    const [isShowLoading, setIsShowLoading] = useState(false);
 
     useEffect(() => {
         getDataCustomers();
@@ -58,6 +60,15 @@ const ModalContract = props => {
             });
         }
     }, [transfer.targetKeys]);
+
+    useEffect(() => {
+
+        const datePay = moment(formContract.startDate).add(formContract.circlePay, 'month');
+
+        form.setFieldsValue({
+            datePay
+        });
+    }, [formContract.startDate, formContract.circlePay]);
 
     const getDataCustomers = async() => {
         const getCustomers = await customerServices.getList();
@@ -106,8 +117,6 @@ const ModalContract = props => {
         }
     };
 
-    console.log(formContract);
-
     const layout = {
         labelCol: {
             xs: {span: 24},
@@ -151,6 +160,19 @@ const ModalContract = props => {
             startDate: moment(dates[0]).format('YYYY-MM-DD'),
             endDate: moment(dates[1]).format('YYYY-MM-DD')
         });
+    };
+
+    const onChangeCirclePay = (event) => {
+        const {value} = event.target;
+
+        setFormContract({
+            ...formContract,
+            circlePay: value
+        });
+    };
+
+    const onClickCancel = () => {
+        toggle();
     };
 
     return (
@@ -252,18 +274,63 @@ const ModalContract = props => {
                             label='Ngày bắt đầu và kết thúc hợp đồng'
                             name='date'
                             rules={[
-                                {required: true, message: 'Vui lòng nhập tiền đặt cọc'}
+                                {required: true, message: 'Vui lòng nhập ngày bắt đầu và kết thúc hợp đồng'}
                             ]}
                         >
                             <RangePicker
                                 onChange={onChangeDateRangePicker}
-                                defaultValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
+                                defaultValue={[moment(), moment().add(1, 'year')]}
                                 format={dateFormat}
                             />
                         </Form.Item>
+                        <Form.Item
+                            label='Kì thanh toán'
+                            name='circlePay'
+                            rules={[
+                                {required: true, message: 'Vui lòng nhập kì thanh toán'}
+                            ]}
+                        >
+                            <Input
+                                onChange={onChangeCirclePay}
+                                placeholder='Vui lòng nhập kì thanh toán'
+                                defaultValue={1}
+                                style={{width: 278}} 
+                                addonAfter={<div className='flex-row-center'><i className='icon-update' />Tháng/lần</div>} />
+                        </Form.Item>
+                        <Form.Item
+                            label='Ngày đóng tiền kì tới'
+                            name='datePay'
+                            rules={[
+                                {required: true, message: 'Vui lòng nhập ngày đóng tiền kì tới'}
+                            ]}
+                        >
+                            <DatePicker 
+                                style={{width: 278}}
+                                placeholder='Chọn ngày đóng tiền kì tới'
+                                defaultValue={moment().add(formContract.circlePay, 'month')}
+                                format={dateFormat} 
+                            />
+                        </Form.Item>
                     </Col>
-                    <Col xs={{span: 24}} md={{span: 12}} />
+                    <Col xs={{span: 24}} md={{span: 12}}>
+                        <Form.Item
+                            label='Ghi chú'
+                            name='note'
+                        >
+                            <Input.TextArea placeholder='Nhập ghi chú' />
+                        </Form.Item>
+                    </Col>
                 </Row>
+                <Form.Item 
+                    wrapperCol={{
+                        md: {span: 8, offset: 16}
+                    }}
+                >
+                    <div className='flex-row' style={{justifyContent: 'flex-end'}}>
+                        <Button onClick={onClickCancel} >Hủy bỏ</Button>&nbsp;
+                        <Button htmlType='submit' type='primary' loading={isShowLoading}>Lưu lại</Button> 
+                    </div>
+                </Form.Item>
             </Form>
         </Modal>
     );
