@@ -13,6 +13,13 @@ import {layout} from 'Layouts/actions';
 // Components
 import ModalContract from './Components/ModalContract';
 
+// Services
+import * as contractServices from 'Src/services/contract';
+import moment from 'moment';
+
+// Utils
+import {capitalize,convertChar} from 'Src/utils';
+
 // Antd
 const {Title} = Typography;
 const {Option} = Select;
@@ -57,7 +64,7 @@ const Contracts = props => {
             <div style={{padding: 8}}>
                 <Input
                     ref={searchInput}
-                    placeholder={`Search ${name}`}
+                    placeholder={`Tìm ${name}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -70,19 +77,19 @@ const Contracts = props => {
                     size="small"
                     style={{width: 90, marginRight: 8}}
                 >
-              Search
+              Tìm
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
-              Reset
+              Đặt lại
                 </Button>
             </div>
         ),
         filterIcon: filtered => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}} />,
         onFilter: (value, record) =>
-            record[dataIndex]
+            convertChar(record[dataIndex])
                 .toString()
                 .toLowerCase()
-                .includes(value.toLowerCase()),
+                .includes(convertChar(value).toLowerCase()),
         onFilterDropdownVisibleChange: visible => {
             if (visible) {
                 if (searchInput) {
@@ -138,6 +145,7 @@ const Contracts = props => {
         },
         {
             title: 'Người đại diện',
+            ...getColumnSearchProps('nameLeader', 'Người đại diện'),
             dataIndex: 'nameLeader',
             key:'nameLeader'
         },
@@ -193,6 +201,38 @@ const Contracts = props => {
 
     },[blocks]);
 
+    useEffect(() => {
+        getDataContracts();
+    }, [blockSelected]);
+
+    const getDataContracts = async () => {
+        setIsShowLoadingTable(true);
+
+        const getContracts = await contractServices.getList({
+            idBlock: blockSelected
+        });
+
+        if (getContracts) {
+            if (getContracts.data && getContracts.data.data) {
+                const {contracts = []} = getContracts.data.data;
+
+                const newContracts = contracts.map(contract => ({
+                    ...contract,
+                    key: contract.id,
+                    nameLeader: contract.fullName,
+                    timeContract:  capitalize(moment(contract.endDate).locale('vi').from(contract.startDate)),
+                    startDate: moment(contract.startDate).format('DD/MM/YYYY'),
+                    endDate: moment(contract.endDate).format('DD/MM/YYYY')
+                    
+                }));
+
+                setContracts(newContracts);
+            }
+        }
+
+        setIsShowLoadingTable(false);
+    };
+
     const onChangeBlocks = (value) => {
         localStorage.setItem('blockSelected',value);
         
@@ -208,6 +248,10 @@ const Contracts = props => {
             ...contractModal,
             isOpen: true
         });
+    };
+
+    const callbackModalContract = () => {
+        getDataContracts();
     };
 
     return (
@@ -267,6 +311,7 @@ const Contracts = props => {
                 isOpen={contractModal.isOpen}
                 blockSelected={blockSelected}
                 toggle={() => {setContractModal({...contractModal, isOpen: !contractModal.isOpen})}}
+                callback={callbackModalContract}
             />
         </div>
     );

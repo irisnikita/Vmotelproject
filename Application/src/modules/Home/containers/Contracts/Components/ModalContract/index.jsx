@@ -9,6 +9,7 @@ import _ from 'lodash';
 // Services
 import * as roomServices from 'Src/services/room';
 import * as customerServices from 'Src/services/customer';
+import * as contractServices from 'Src/services/contract';
 
 const {Option} = Select;
 const {RangePicker} = DatePicker;
@@ -19,7 +20,7 @@ const ModalContract = props => {
     const [form] = Form.useForm();
 
     // Props
-    const {isOpen, contractEdited, toggle, blockSelected} = props;
+    const {isOpen, contractEdited, toggle, blockSelected, callback} = props;
 
     // State
     const [rooms, setRooms] = useState([]);
@@ -33,7 +34,7 @@ const ModalContract = props => {
     const [formContract, setFormContract] = useState({
         idSlave: '',
         startDate: moment().format('YYYY-MM-DD'),
-        endDate: moment().add(1, 'month').format('YYYY-MM-DD'),
+        endDate: moment().add(1, 'year').format('YYYY-MM-DD'),
         circlePay: 1
     });
     const [isShowLoading, setIsShowLoading] = useState(false);
@@ -41,6 +42,12 @@ const ModalContract = props => {
     useEffect(() => {
         getDataCustomers();
     }, []);
+
+    useEffect(() => {
+        form.setFieldsValue({
+            dayPay: +moment(formContract.startDate, 'YYYY-MM-DD').format('DD')
+        });
+    }, [formContract.startDate]);
 
     useEffect(() => {
         getDataRooms();
@@ -60,15 +67,6 @@ const ModalContract = props => {
             });
         }
     }, [transfer.targetKeys]);
-
-    useEffect(() => {
-
-        const datePay = moment(formContract.startDate).add(formContract.circlePay, 'month');
-
-        form.setFieldsValue({
-            datePay
-        });
-    }, [formContract.startDate, formContract.circlePay]);
 
     const getDataCustomers = async() => {
         const getCustomers = await customerServices.getList();
@@ -97,15 +95,60 @@ const ModalContract = props => {
         toggle();
     };
 
-    const onFinishForm = () => {
-        
+    const onFinishForm = (value) => {
+        createContract(value);
     };
 
+    const createContract = async (valueForm) => {
+        if (props.userLogin.id) {
+            setIsShowLoading(true);
+
+            const userRooms = transfer.targetKeys.map(user => ({
+                idUser: user,
+                idRoom: valueForm.idRoom
+            }));
+
+            const contract = {
+                idRoom: valueForm.idRoom,
+                idOwner: props.userLogin.id || 0,
+                idSlave: valueForm.idSlave,
+                startDate: formContract.startDate,
+                endDate: formContract.endDate,
+                circlePay: valueForm.circlePay,
+                deposit: valueForm.deposit,
+                dayPay: valueForm.dayPay,
+                note: valueForm.note,
+                idBlock: blockSelected,
+                userRooms
+            };
+
+            const createContract = await contractServices.create({
+                ...contract
+            });
+
+            if (createContract) {
+                if (createContract.data && createContract.data.data) {
+                    message.success('Tạo hợp đồng thành công');
+                    toggle();
+                    callback();
+                    getDataRooms();
+                }
+                else {
+                    message.error('Tạo hợp đồng thất bại');
+                }
+            }
+
+            setIsShowLoading(false);
+
+        }
+
+    };
     const getDataRooms = async () => {
 
         const getRooms = await roomServices.getList({
             idBlock: blockSelected,
-            id:1
+            id:1,
+            isMatch: true
         });
 
         if (getRooms) {
@@ -192,7 +235,17 @@ const ModalContract = props => {
             onCancel={onCancelModal}
             footer={null}
         >
-            <Form form={form} {...layout} name='form-contract' onFinish={onFinishForm} labelAlign='left'>
+            <Form 
+                form={form} {...layout} 
+                name='form-contract' 
+                onFinish={onFinishForm} 
+                labelAlign='left'
+                initialValues={{
+                    date: [moment(), moment().add(1, 'year')],
+                    circlePay: 1,
+                    dayPay: +moment().format('DD')
+                }}
+            >
                 <Row>
                     <Col xs={{span: 24}} md={{span: 12}}>
                         <Form.Item
@@ -279,7 +332,6 @@ const ModalContract = props => {
                         >
                             <RangePicker
                                 onChange={onChangeDateRangePicker}
-                                defaultValue={[moment(), moment().add(1, 'year')]}
                                 format={dateFormat}
                             />
                         </Form.Item>
@@ -293,23 +345,17 @@ const ModalContract = props => {
                             <Input
                                 onChange={onChangeCirclePay}
                                 placeholder='Vui lòng nhập kì thanh toán'
-                                defaultValue={1}
                                 style={{width: 278}} 
                                 addonAfter={<div className='flex-row-center'><i className='icon-update' />Tháng/lần</div>} />
                         </Form.Item>
                         <Form.Item
                             label='Ngày đóng tiền kì tới'
-                            name='datePay'
+                            name='dayPay'
                             rules={[
                                 {required: true, message: 'Vui lòng nhập ngày đóng tiền kì tới'}
                             ]}
                         >
-                            <DatePicker 
-                                style={{width: 278}}
-                                placeholder='Chọn ngày đóng tiền kì tới'
-                                defaultValue={moment().add(formContract.circlePay, 'month')}
-                                format={dateFormat} 
-                            />
+                            <InputNumber style={{width: 278}} min={0} max={30} placeholder='Nhập ngày đóng tiền kì tới' />
                         </Form.Item>
                     </Col>
                     <Col xs={{span: 24}} md={{span: 12}}>
@@ -336,6 +382,12 @@ const ModalContract = props => {
     );
 };
 
+function mapStateToProps(state) {
+    return {
+        userLogin: state.Layouts.layoutReducer.userLogin
+    };
+}
+
 ModalContract.propTypes = {
     toggle: PropTypes.func.isRequired
 };
@@ -345,4 +397,4 @@ ModalContract.defaultProps = {
     contractEdited: {}
 };
 
-export default ModalContract;
+export default connect(mapStateToProps, null)(ModalContract);

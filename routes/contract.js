@@ -1,56 +1,38 @@
 // router
 const express = require('express');
-const roomRouters = express.Router();
+const contractRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 
 // Model
-const roomModel = require('../model/room');
+const contractModel = require('../model/contract');
 const roomImageModel = require('../model/roomImage');
 
-const roomRouter = (app) => {
+const contractRouter = (app) => {
 
-    roomRouters.use(authMiddleware.isAuth)
+    contractRouters.use(authMiddleware.isAuth)
 
-    roomRouters.get('/get-rooms', (req, res) => {
-        const { isMatch = false } = req.query;
+    contractRouters.get('/get-contracts', (req, res) => {
+        contractModel.getAll(req, async (err, rows, fields) => {
 
-        if (isMatch) {
-            roomModel.getNoMatch(req, (err, rows) => {
-                if (!err) {
-                    res.send({
-                        status: res.statusCode,
-                        message: 'Get rooms success',
-                        data: {
-                            rooms: rows
-                        }
-                    })
-                }
-            })
-        }
-        else {
-            roomModel.getAll(req, async (err, rows, fields) => {
-
-                if (!err) {
-                    res.send({
-                        status: res.statusCode,
-                        message: 'Get rooms success',
-                        data: {
-                            rooms: rows
-                        }
-                    })
-                }
-            })
-        }
-
-
-    })
-
-    roomRouters.post('/create', (req, res) => {
-        roomModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Create rooms success',
+                    message: 'Get contracts success',
+                    data: {
+                        contracts: rows
+                    }
+                })
+            }
+        })
+
+    })
+
+    contractRouters.post('/create', (req, res) => {
+        contractModel.create(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Create contract success',
                     data: {
                         status: 1
                     }
@@ -63,8 +45,26 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.delete('/delete/:id', (req, res) => {
-        roomModel.delete(req, (err, rows) => {
+    contractRouters.post('/create-user-room', (req, res) => {
+        contractModel.create(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Create userRoom success',
+                    data: {
+                        status: 1
+                    }
+                })
+            } else {
+                res.send({
+                    message: err
+                })
+            }
+        })
+    })
+
+    contractRouters.delete('/delete/:id', (req, res) => {
+        contractModel.delete(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -81,8 +81,8 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.put('/update/:id', (req, res) => {
-        roomModel.update(req, (err, rows) => {
+    contractRouters.put('/update/:id', (req, res) => {
+        contractModel.update(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -99,8 +99,8 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.post('/delete-all', (req, res) => {
-        roomModel.deleteAll(req, (err, rows) => {
+    contractRouters.post('/delete-all', (req, res) => {
+        contractModel.deleteAll(req, (err, rows) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
@@ -117,7 +117,7 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.post('/uploadImage', (req, res) => {
+    contractRouters.post('/uploadImage', (req, res) => {
         roomImageModel.create(req, (err, rows, fields) => {
             if (!err) {
                 res.send({
@@ -135,7 +135,7 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.get('/get-images', (req, res) => {
+    contractRouters.get('/get-images', (req, res) => {
         roomImageModel.getAll(req.query.codeRoom, (err, rows, fields) => {
             if (!err) {
                 res.send({
@@ -153,7 +153,7 @@ const roomRouter = (app) => {
         })
     })
 
-    roomRouters.post('/delete-images', (req, res) => {
+    contractRouters.post('/delete-images', (req, res) => {
         roomImageModel.deleteAll(req, (err, rows, fields) => {
             if (!err) {
                 res.send({
@@ -171,7 +171,7 @@ const roomRouter = (app) => {
         })
     })
 
-    app.use('/room', roomRouters);
+    app.use('/contract', contractRouters);
 }
 
-module.exports = roomRouter;
+module.exports = contractRouter;

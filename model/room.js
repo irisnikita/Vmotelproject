@@ -11,6 +11,11 @@ const Room = {
         let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
         return connection.query(query, [idBlock], callback);
     },
+    getNoMatch: (req, callback) => {
+        const { idBlock = '' } = req.query;
+        let query = 'SELECT R.* FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?'
+        return connection.query(query, [idBlock], callback)
+    },
     delete: (req, callback) => {
         const { id = '' } = req.params;
         let query = 'DELETE FROM ROOMS WHERE id = ?'

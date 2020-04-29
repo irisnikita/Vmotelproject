@@ -1,5 +1,23 @@
 import {message} from 'antd'; 
 
+export const capitalize = (s) => {
+    if (typeof s !== 'string') {return ''}
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+/**
+ * Hàm chuyển ký tự có dấu thành không dấu
+ * @param {*} s 
+ */
+export const convertChar = (string) => {
+    string = string.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D');
+
+    return string;
+};
+
 export const fortmatName = (key) => {
     if (key && typeof key === 'string') {
         switch (key) {
