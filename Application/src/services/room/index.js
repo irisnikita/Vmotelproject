@@ -4,6 +4,9 @@ import {appConfig} from 'Src/constant';
 export function create(params) {
     return services.create({...params, API: appConfig.API + '/room/create'});
 }
+export function get(params) {
+    return services.get({...params, API: appConfig.API + '/room/get-rooms'});
+}
 export function getList(params) {
     return services.getList({...params, API: appConfig.API + '/room/get-rooms'});
 }

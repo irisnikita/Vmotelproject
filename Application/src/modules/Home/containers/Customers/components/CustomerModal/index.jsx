@@ -116,7 +116,8 @@ const CustomerModal = props => {
             avatar: images.avatar,
             identifyBack: images.identifyBack,
             identifyFront: images.identifyFront,
-            codeUser: '#' + moment().unix()
+            codeUser: '#' + moment().unix(),
+            status: 0
         };
 
         if (_.isEmpty(customerEdited)) {

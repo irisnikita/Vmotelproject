@@ -115,27 +115,26 @@ const Contracts = props => {
             title: '',
             dataIndex: 'edit',
             key:'edit',
-            width: 100
-            
-            // render: (id)=> <div className='flex-row-center'>
-            //     <Tooltip title='Sửa'>
-            //         <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
-            //             <i className='icon-createmode_editedit' />
-            //         </Button>
-            //     </Tooltip> &nbsp;
-            //     <Tooltip title='Xóa'>
-            //         <Popconfirm
-            //             title='Bạn muốn xóa khu trọ/căn hộ này?'
-            //             onConfirm={()=>onConfirmRemove(id)}
-            //             okText='Xóa'
-            //             cancelText='Hủy'
-            //         >
-            //             <Button className='flex-row-center' size='small' type='danger' shape='circle'>
-            //                 <i className='icon-highlight_remove' />
-            //             </Button>
-            //         </Popconfirm>
-            //     </Tooltip>
-            // </div>
+            width: 100,
+            render: (id)=> <div className='flex-row-center'>
+                <Tooltip title='Sửa'>
+                    <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
+                        <i className='icon-createmode_editedit' />
+                    </Button>
+                </Tooltip> &nbsp;
+                <Tooltip title='Xóa'>
+                    <Popconfirm
+                        title='Bạn muốn xóa khu trọ/căn hộ này?'
+                        onConfirm={()=>onConfirmRemove(id)}
+                        okText='Xóa'
+                        cancelText='Hủy'
+                    >
+                        <Button className='flex-row-center' size='small' type='danger' shape='circle'>
+                            <i className='icon-highlight_remove' />
+                        </Button>
+                    </Popconfirm>
+                </Tooltip>
+            </div>
         },
         {
             title: 'Tên phòng',
@@ -157,12 +156,14 @@ const Contracts = props => {
         {
             title: 'Ngày bắt đầu',
             dataIndex: 'startDate',
-            key:'startDate'
+            key:'startDate',
+            render: (startDate) => <div>{moment(startDate).format('DD/MM/YYYY')}</div>
         },
         {
             title: 'Ngày hết hạn',
             dataIndex: 'endDate',
-            key:'endDate'
+            key:'endDate',
+            render: (endDate) => <div>{moment(endDate).format('DD/MM/YYYY')}</div> 
         },
         {
             title: 'Tiền đặt cọc',
@@ -202,8 +203,37 @@ const Contracts = props => {
     },[blocks]);
 
     useEffect(() => {
-        getDataContracts();
+        if (blockSelected !== null) {
+            getDataContracts();
+        }
     }, [blockSelected]);
+
+    const onClickEdit = (id) => {
+        const contractEdited = contracts.find(contract => contract.id === id);
+
+        setContractModal({
+            ...contractModal,
+            isOpen: true,
+            contractEdited
+        });
+
+    };
+
+    const onConfirmRemove = async (id) => {
+        const deleteContract = await contractServices.del({
+            id
+        });
+
+        if (deleteContract) {
+            if (deleteContract.data && deleteContract.data.data) {
+                getDataContracts();
+
+                message.success('Xóa hợp đồng thành công!');
+            } else {
+                message.error('Xóa hợp đồng thất bại');
+            }
+        }
+    };
 
     const getDataContracts = async () => {
         setIsShowLoadingTable(true);
@@ -219,11 +249,9 @@ const Contracts = props => {
                 const newContracts = contracts.map(contract => ({
                     ...contract,
                     key: contract.id,
+                    edit: contract.id,
                     nameLeader: contract.fullName,
-                    timeContract:  capitalize(moment(contract.endDate).locale('vi').from(contract.startDate)),
-                    startDate: moment(contract.startDate).format('DD/MM/YYYY'),
-                    endDate: moment(contract.endDate).format('DD/MM/YYYY')
-                    
+                    timeContract:  capitalize(moment(contract.endDate).locale('vi').from(contract.startDate))
                 }));
 
                 setContracts(newContracts);
@@ -239,14 +267,27 @@ const Contracts = props => {
         setBlockSelected(value);
     };
 
-    const onConfirmDelete = () => {
+    const onConfirmDelete = async () => {
+        const deleteMany = await contractServices.delAll({
+            contractsId: selectedRowKeys
+        });
+
+        if (deleteMany) {
+            if (deleteMany.data && deleteMany.data.data) {
+                message.success(`Xóa ${selectedRowKeys.length} hợp đồng thành công`);
+                getDataContracts();
+            } else {
+                message.error(`Xóa ${selectedRowKeys.length} hợp đồng thất bại`);
+            }
+        }
 
     };
 
     const onClickAddNew = () => {
         setContractModal({
             ...contractModal,
-            isOpen: true
+            isOpen: true,
+            contractEdited: {}
         });
     };
 
@@ -312,6 +353,7 @@ const Contracts = props => {
                 blockSelected={blockSelected}
                 toggle={() => {setContractModal({...contractModal, isOpen: !contractModal.isOpen})}}
                 callback={callbackModalContract}
+                contractEdited = {contractModal.contractEdited}
             />
         </div>
     );

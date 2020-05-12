@@ -24,6 +24,7 @@ const ModalContract = props => {
 
     // State
     const [rooms, setRooms] = useState([]);
+    const [room, setRoom] = useState({});
     const [customers, setCustomers] = useState([]);
     const [transfer, setTransfer] = useState({
         targetKeys: [],
@@ -42,6 +43,52 @@ const ModalContract = props => {
     useEffect(() => {
         getDataCustomers();
     }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            if (!_.isEmpty(contractEdited)) {
+                form.setFieldsValue({
+                    idRoom: contractEdited.idRoom,
+                    idSlave: contractEdited.idSlave,
+                    circlePay: contractEdited.circlePay,
+                    deposit: contractEdited.deposit,
+                    dayPay: contractEdited.dayPay,
+                    note: contractEdited.note,
+                    date: [moment(contractEdited.startDate), moment(contractEdited.endDate)]
+                });
+
+                getRoom(contractEdited.idRoom);
+                setFormContract({
+                    startDate: moment(contractEdited.startDate).format('YYYY-MM-DD'),
+                    endDate: moment(contractEdited.endDate).format('YYYY-MM-DD')
+                });
+                setTransfer({
+                    targetKeys: contractEdited.idUsers,
+                    selectedKeys: []
+                });
+
+            } else {
+                form.setFieldsValue({
+                    idRoom: '',
+                    idSlave: '',
+                    deposit: '',
+                    note: '',
+                    date: [moment(), moment().add(1, 'year')],
+                    circlePay: 1,
+                    dayPay: +moment().format('DD')
+                });
+                setTransfer({
+                    targetKeys: [],
+                    selectedKeys: []
+                });
+                setFormContract({
+                    startDate: moment().format('YYYY-MM-DD'),
+                    endDate: moment().add(1, 'year').format('YYYY-MM-DD'),
+                    circlePay: 1
+                });
+            }
+        }
+    }, [isOpen, contractEdited]);
 
     useEffect(() => {
         form.setFieldsValue({
@@ -67,6 +114,20 @@ const ModalContract = props => {
             });
         }
     }, [transfer.targetKeys]);
+
+    const getRoom = async (id) => {
+        const getRoom = await roomServices.get({
+            id
+        });
+        
+        if (getRoom) {
+            if (getRoom.data && getRoom.data.data) {
+                const {room = {}} = getRoom.data.data;
+
+                setRoom(room || {});
+            }
+        }
+    };
 
     const getDataCustomers = async() => {
         const getCustomers = await customerServices.getList();
@@ -96,7 +157,54 @@ const ModalContract = props => {
     };
 
     const onFinishForm = (value) => {
-        createContract(value);
+        if (_.isEmpty(contractEdited)) {
+            createContract(value);
+        }
+        else {
+            updateContract(value);
+        }
+        
+    };
+
+    const updateContract = async (valueForm) => {
+        if (props.userLogin.id) {
+            setIsShowLoading(true);
+
+            const userRooms = transfer.targetKeys.map(user => ({
+                idUser: user,
+                idRoom: valueForm.idRoom
+            }));
+
+            const contract = {
+                idRoom: valueForm.idRoom,
+                idSlave: valueForm.idSlave,
+                startDate: formContract.startDate,
+                endDate: formContract.endDate,
+                circlePay: valueForm.circlePay,
+                deposit: valueForm.deposit,
+                dayPay: valueForm.dayPay,
+                note: valueForm.note,
+                userRooms
+            };
+
+            const updateContract = await contractServices.update({
+                ...contract,
+                id: contractEdited.id
+            });
+
+            if (updateContract) {
+                if (updateContract.data && updateContract.data.data) {
+                    message.success('Cập nhật hợp đồng thành công');
+                    toggle();
+                    callback();
+                } else {
+                    message.error('Cập nhật hợp đồng thật bại');
+                }
+            }
+
+            setIsShowLoading(false);
+
+        }
     };
 
     const createContract = async (valueForm) => {
@@ -252,19 +360,22 @@ const ModalContract = props => {
                             label='Chọn phòng'
                             name='idRoom'
                             rules={[
-                                {required: true, message: 'Hãy chọn phòng'}
+                                {required: _.isEmpty(contractEdited) ? true : false, message: 'Hãy chọn phòng'}
                             ]}
                         >
-                            <Select style={{width: 278}} placeholder='Hãy chọn phòng'>
-                                {
-                                    rooms.length > 0 ?
-                                        rooms.map(room => {
-                                            return <Option key={room.id} value={room.id}>
-                                                {room.nameRoom}
-                                            </Option>;
-                                        }) : null
-                                }
-                            </Select>
+                            {_.isEmpty(contractEdited) ? 
+                                <Select style={{width: 278}} placeholder='Hãy chọn phòng'>
+                                    {
+                                        rooms.length > 0 ?
+                                            rooms.map(room => {
+                                                return <Option key={room.id} value={room.id}>
+                                                    {room.nameRoom}
+                                                </Option>;
+                                            }) : null
+                                    }
+                                </Select> : 
+                                <strong>{room.nameRoom}</strong>
+                            }
                         </Form.Item>
                     </Col>
                 </Row>

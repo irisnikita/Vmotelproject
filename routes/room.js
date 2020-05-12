@@ -11,37 +11,55 @@ const roomRouter = (app) => {
 
     roomRouters.use(authMiddleware.isAuth)
 
-    roomRouters.get('/get-rooms', (req, res) => {
+    roomRouters.get('/get-rooms/:id?', (req, res) => {
         const { isMatch = false } = req.query;
+        const { id } = req.params;
 
-        if (isMatch) {
-            roomModel.getNoMatch(req, (err, rows) => {
+        if (id) {
+            roomModel.get(id, (err, rows) => {
                 if (!err) {
                     res.send({
                         status: res.statusCode,
-                        message: 'Get rooms success',
+                        message: 'Get room success',
                         data: {
-                            rooms: rows
+                            room: rows[0]
                         }
                     })
-                }
-            })
-        }
-        else {
-            roomModel.getAll(req, async (err, rows, fields) => {
-
-                if (!err) {
+                } else {
                     res.send({
-                        status: res.statusCode,
-                        message: 'Get rooms success',
-                        data: {
-                            rooms: rows
-                        }
+                        message: 'Can\'t get room'
                     })
                 }
             })
-        }
+        } else {
+            if (isMatch) {
+                roomModel.getNoMatch(req, (err, rows) => {
+                    if (!err) {
+                        res.send({
+                            status: res.statusCode,
+                            message: 'Get rooms success',
+                            data: {
+                                rooms: rows
+                            }
+                        })
+                    }
+                })
+            }
+            else {
+                roomModel.getAll(req, async (err, rows, fields) => {
 
+                    if (!err) {
+                        res.send({
+                            status: res.statusCode,
+                            message: 'Get rooms success',
+                            data: {
+                                rooms: rows
+                            }
+                        })
+                    }
+                })
+            }
+        }
 
     })
 

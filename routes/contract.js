@@ -2,6 +2,7 @@
 const express = require('express');
 const contractRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
+const connection = require('../database');
 
 // Model
 const contractModel = require('../model/contract');
@@ -13,15 +14,55 @@ const contractRouter = (app) => {
 
     contractRouters.get('/get-contracts', (req, res) => {
         contractModel.getAll(req, async (err, rows, fields) => {
-
             if (!err) {
-                res.send({
-                    status: res.statusCode,
-                    message: 'Get contracts success',
-                    data: {
-                        contracts: rows
-                    }
-                })
+                const getUser = (contracts, callback) => {
+                    let Users = [];
+                    let pendding = contracts.length;
+
+                    contracts.forEach((contract) => {
+                        let query = 'SELECT idUser FROM USER_ROOM WHERE idRoom = ?';
+                        connection.query(query, [contract.idRoom], (err, idUsers) => {
+                            const newIdUsers = JSON.parse(JSON.stringify(idUsers)).map(idUser => (+`${idUser.idUser}`))
+                            if (!err) {
+                                Users.push({
+                                    ...contract,
+                                    idUsers: newIdUsers
+                                })
+                                if (0 === --pendding) {
+                                    callback(Users)
+                                }
+                            }
+                        })
+                    })
+
+
+                }
+
+                if (rows.length > 0) {
+                    getUser(JSON.parse(JSON.stringify(rows)), (Users) => {
+                        if (Users) {
+                            res.send({
+                                status: res.statusCode,
+                                message: 'Get contracts success',
+                                data: {
+                                    contracts: Users
+                                }
+                            })
+                        } else {
+                            res.send({
+                                message: 'Can\'t get contracts'
+                            })
+                        }
+                    })
+                } else {
+                    res.send({
+                        status: res.statusCode,
+                        message: 'Get contracts success',
+                        data: {
+                            contracts: []
+                        }
+                    })
+                }
             }
         })
 
@@ -68,14 +109,14 @@ const contractRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete room success',
+                    message: 'Delete contract success',
                     data: {
                         status: 1
                     }
                 })
             } else {
                 res.send({
-                    message: 'Can\'t delete room success'
+                    message: 'Can\'t delete contract'
                 })
             }
         })
@@ -86,7 +127,7 @@ const contractRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Update room success',
+                    message: 'Update contract success',
                     data: {
                         status: 1
                     }
@@ -104,7 +145,7 @@ const contractRouter = (app) => {
             if (!err) {
                 res.send({
                     status: res.statusCode,
-                    message: 'Delete rooms success',
+                    message: 'Delete contracts success',
                     data: {
                         status: 1
                     }

@@ -261,19 +261,26 @@ const RoomsMotel = props => {
 
     const onConfirmRemove = async (id) => {
         if (id) {
-            const deleteRoom = await roomServices.del({
-                id
-            });
+            const newRooms = rooms.find(room => room.key === id);
 
-            if (deleteRoom) {
-                if (deleteRoom.data && deleteRoom.data.data) {
-                    message.success('Xóa phòng thành công');
+            if (newRooms.status === 0) {
+                const deleteRoom = await roomServices.del({
+                    id
+                });
+
+                if (deleteRoom) {
+                    if (deleteRoom.data && deleteRoom.data.data) {
+                        message.success('Xóa phòng thành công');
                     
-                    getDataRooms();
-                } else {
-                    message.error('Xóa phòng không thành công');
+                        getDataRooms();
+                    } else {
+                        message.error('Xóa phòng không thành công');
+                    }
                 }
+            } else {
+                message.warning('Phòng đang thuê bạn không thể xóa!');
             }
+           
         } 
     };
 
@@ -317,19 +324,32 @@ const RoomsMotel = props => {
     };
 
     const onConfirmDelete = async () => {
-        const deleteAll = await roomServices.delAll({
-            roomsId: selectedRowKeys
+        const newRooms = rooms.filter(room => {
+            return selectedRowKeys.some(row => row === room.key);
         });
 
-        if (deleteAll) {
-            if (deleteAll.data && deleteAll.data.data) {
-                message.success('Xóa thành công');
-                setselectedRowKeys([]);
-                getDataRooms();
-            } else {
-                message.error('Xóa thất bại');
+        const isInValid = newRooms.some(room => room.status === 1);
+
+        if (!isInValid) {
+            const deleteAll = await roomServices.delAll({
+                roomsId: selectedRowKeys
+            });
+
+            if (deleteAll) {
+                if (deleteAll.data && deleteAll.data.data) {
+                    message.success('Xóa thành công');
+                    setselectedRowKeys([]);
+                    getDataRooms();
+                } else {
+                    message.error('Xóa thất bại');
+                }
             }
+        } else {
+            const draftRooms = newRooms.filter(room => room.status === 1);
+
+            message.warning(`Có ${draftRooms.length} phòng đang cho thuê, bạn không thể xóa!`);
         }
+       
     };
 
     const onClickAddNew = () => {

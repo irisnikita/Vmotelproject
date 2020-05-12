@@ -1,7 +1,7 @@
 // Libraries
 import React, {Component, Suspense} from 'react';
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
-import {Layout} from 'antd';
+import {Layout, Spin} from 'antd';
 import {connect} from 'react-redux';
 
 // Services
@@ -45,7 +45,7 @@ class DefaultMain extends Component {
                     <Layout>
                         <Layout style={{padding: 10}}>
                             <Content className={'right-content'}>
-                                <Suspense fallback={<div>Loading...</div>}>
+                                <Suspense fallback={<Spin><div style={{height: '100vh'}} /></Spin>}>
                                     <Switch>
                                         {routes.map((route, idx) => {
                                             return route.component ? (
