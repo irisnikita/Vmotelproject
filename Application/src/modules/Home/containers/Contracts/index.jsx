@@ -1,46 +1,45 @@
 // Libraries
 import React, {useEffect, useState, useRef} from 'react';
 import PropTypes from 'prop-types';
+import {Button, Table,Row,Col, Typography, Tooltip, Spin, Input, Popconfirm, message, Select, Avatar} from 'antd';
 import {connect} from 'react-redux';
-import {Button, Table,Row,Col, Typography, Tooltip, Spin, Popconfirm, message, Select, Input, InputNumber} from 'antd';
-import axios from 'axios';
-import numeral from 'numeral';
 import Highlighter from 'react-highlight-words';
+import numeral from 'numeral';
 import {SearchOutlined} from '@ant-design/icons';
 
 // Actions
 import {layout} from 'Layouts/actions';
 
-// Servers
-import * as blockServices from 'Src/services/block';
-import * as roomServices from 'Src/services/room';
-
 // Components
-import RoomModal from './components/RoomModal';
-import AddMoreRoom from './components/AddMoreRoom';
+import ModalContract from './Components/ModalContract';
+
+// Services
+import * as contractServices from 'Src/services/contract';
+import moment from 'moment';
+
+// Utils
+import {capitalize,convertChar} from 'Src/utils';
 
 // Antd
 const {Title} = Typography;
 const {Option} = Select;
 
-const RoomsMotel = props => {
+const Contracts = props => {
     // Props
-    const {blocks} = props;
+    const {layout, blocks} = props;
 
-    const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
+    // State
     const [blockSelected, setBlockSelected] = useState(null);
-    const [rooms, setRooms] = useState([]);
-    const [roomModal, setRoomModal] = useState({
-        isOpen: false,
-        roomEdited: {},
-        title: 'Tạo mới',
-        type: 'create'
-    });
-    const [selectedRowKeys, setselectedRowKeys] = useState([]);
-    const [isOpenAddMoreRoom, setIsOpenAddMoreRoom] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [isShowLoadingTable, setIsShowLoadingTable] = useState(false);
+    const [selectedRowKeys, setselectedRowKeys] = useState([]);
+    const [contracts, setContracts] = useState([]);
     const searchInput = useRef(null);
+    const [contractModal, setContractModal] = useState({
+        isOpen: false,
+        contractEdited: {}
+    });
 
     const rowSelection = {
         selectedRowKeys,
@@ -65,7 +64,7 @@ const RoomsMotel = props => {
             <div style={{padding: 8}}>
                 <Input
                     ref={searchInput}
-                    placeholder={`Search ${name}`}
+                    placeholder={`Tìm ${name}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -78,19 +77,19 @@ const RoomsMotel = props => {
                     size="small"
                     style={{width: 90, marginRight: 8}}
                 >
-              Search
+              Tìm
                 </Button>
                 <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
-              Reset
+              Đặt lại
                 </Button>
             </div>
         ),
         filterIcon: filtered => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}} />,
         onFilter: (value, record) =>
-            record[dataIndex]
+            convertChar(record[dataIndex])
                 .toString()
                 .toLowerCase()
-                .includes(value.toLowerCase()),
+                .includes(convertChar(value).toLowerCase()),
         onFilterDropdownVisibleChange: visible => {
             if (visible) {
                 if (searchInput) {
@@ -117,7 +116,6 @@ const RoomsMotel = props => {
             dataIndex: 'edit',
             key:'edit',
             width: 100,
-            
             render: (id)=> <div className='flex-row-center'>
                 <Tooltip title='Sửa'>
                     <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
@@ -139,85 +137,51 @@ const RoomsMotel = props => {
             </div>
         },
         {
-            title: 'Tầng',
-            dataIndex: 'floor',
-            key:'floor'
-        },
-        {
             title: 'Tên phòng',
             dataIndex: 'nameRoom',
             ...getColumnSearchProps('nameRoom', 'Tên phòng'),
             key:'nameRoom'
         },
         {
-            title: 'Số người tối đa',
-            dataIndex: 'maxPeople',
-            key:'maxPeople'
+            title: 'Người đại diện',
+            ...getColumnSearchProps('nameLeader', 'Người đại diện'),
+            dataIndex: 'nameLeader',
+            key:'nameLeader'
         },
         {
-            title: 'Diện tích(m2)',
-            dataIndex: 'square',
-            key:'square',
-            sorter: (a, b) => a.square - b.square,
-            ellipsis: true
+            title: 'Thời hạn hợp đồng',
+            dataIndex: 'timeContract',
+            key:'timeContract'
         },
         {
-            title: 'Đơn giá',
-            dataIndex: 'price',
-            key:'price',
+            title: 'Ngày bắt đầu',
+            dataIndex: 'startDate',
+            key:'startDate',
+            render: (startDate) => <div>{moment(startDate).format('DD/MM/YYYY')}</div>
+        },
+        {
+            title: 'Ngày hết hạn',
+            dataIndex: 'endDate',
+            key:'endDate',
+            render: (endDate) => <div>{moment(endDate).format('DD/MM/YYYY')}</div> 
+        },
+        {
+            title: 'Tiền đặt cọc',
+            dataIndex: 'deposit',
+            key:'deposit',
             sorter: (a, b) => a.price - b.price,
             render: (price) => (<div>
                 {numeral(price).format('0,0.00')} vnđ
             </div>)
-        },
-        {
-            title: <div style={{textAlign: 'center'}}>Trạng thái</div>,
-            dataIndex: 'status',
-            key:'status',
-            filterMultiple: false,
-            filters: [
-                {
-                    text: 'Còn trống',
-                    value: 0
-                },
-                {
-                    text: 'Đã thuê',
-                    value: 1
-                }
-            ],
-            onFilter: (value, record) => value === record.status,
-            render: (status) => {
-                switch (status) {
-                    case 0:
-                        return <div className='flex-row-center' style={{color: '#f5222d'}}>
-                            <i className='icon-error'  /> &nbsp;
-                            Còn trống
-                        </div>;
-                
-                    case 1:
-                        return <div className='flex-row-center' style={{color: '#13c2c2'}}>
-                            <i className='icon-check_circle' /> &nbsp;
-                            Đã thuê
-                        </div>;
-                
-                    default:
-                        break;
-                }
-            }
-        },
-        {
-            title: 'Mô tả',
-            dataIndex: 'description',
-            key:'description',
-            ellipsis: true
         }
     ];
 
     useEffect(() => {
-        props.layout({
+        layout({
             type: 'path',
-            value: 'rooms-motel'
+            value: 'contracts'
         });
+
     }, []);
 
     useEffect(()=>{
@@ -239,149 +203,103 @@ const RoomsMotel = props => {
     },[blocks]);
 
     useEffect(() => {
-        if (blockSelected) {
-            
-            // Get data rooms
-            getDataRooms();
+        if (blockSelected !== null) {
+            getDataContracts();
         }
-
     }, [blockSelected]);
 
     const onClickEdit = (id) => {
-        const room = rooms.find(room => room.key === id);
+        const contractEdited = contracts.find(contract => contract.id === id);
 
-        setRoomModal({
-            ...roomModal,
+        setContractModal({
+            ...contractModal,
             isOpen: true,
-            roomEdited: room,
-            title: 'Chỉnh sửa',
-            type: 'edit'
+            contractEdited
         });
+
     };
 
     const onConfirmRemove = async (id) => {
-        if (id) {
-            const newRooms = rooms.find(room => room.key === id);
+        const deleteContract = await contractServices.del({
+            id
+        });
 
-            if (newRooms.status === 0) {
-                const deleteRoom = await roomServices.del({
-                    id
-                });
+        if (deleteContract) {
+            if (deleteContract.data && deleteContract.data.data) {
+                getDataContracts();
 
-                if (deleteRoom) {
-                    if (deleteRoom.data && deleteRoom.data.data) {
-                        message.success('Xóa phòng thành công');
-                    
-                        getDataRooms();
-                    } else {
-                        message.error('Xóa phòng không thành công');
-                    }
-                }
+                message.success('Xóa hợp đồng thành công!');
             } else {
-                message.warning('Phòng đang thuê bạn không thể xóa!');
+                message.error('Xóa hợp đồng thất bại');
             }
-           
-        } 
+        }
+    };
+
+    const getDataContracts = async () => {
+        setIsShowLoadingTable(true);
+
+        const getContracts = await contractServices.getList({
+            idBlock: blockSelected
+        });
+
+        if (getContracts) {
+            if (getContracts.data && getContracts.data.data) {
+                const {contracts = []} = getContracts.data.data;
+
+                const newContracts = contracts.map(contract => ({
+                    ...contract,
+                    key: contract.id,
+                    edit: contract.id,
+                    nameLeader: contract.fullName,
+                    timeContract:  capitalize(moment(contract.endDate).locale('vi').from(contract.startDate))
+                }));
+
+                setContracts(newContracts);
+            }
+        }
+
+        setIsShowLoadingTable(false);
     };
 
     const onChangeBlocks = (value) => {
         localStorage.setItem('blockSelected',value);
         
         setBlockSelected(value);
-        
-    };
-
-    const getDataRooms = async () => {
-        setIsShowLoadingTable(true);
-
-        const getRooms = await roomServices.getList({
-            idBlock: blockSelected,
-            id:1
-        });
-
-        if (getRooms) {
-            if (getRooms.data && getRooms.data.data) {
-                const {rooms} = getRooms.data.data;
-
-                const draftRooms = rooms.map(room => ({
-                    key: room.id,
-                    nameRoom: room.nameRoom,
-                    edit: room.id,
-                    floor: room.floor,
-                    square: room.square,
-                    price: room.price,
-                    description: room.description,
-                    maxPeople: room.maxPeople,
-                    status: room.status,
-                    codeRoom: room.codeRoom
-                }));
-
-                setRooms(draftRooms);
-            }
-
-            setIsShowLoadingTable(false);
-        }
     };
 
     const onConfirmDelete = async () => {
-        const newRooms = rooms.filter(room => {
-            return selectedRowKeys.some(row => row === room.key);
+        const deleteMany = await contractServices.delAll({
+            contractsId: selectedRowKeys
         });
 
-        const isInValid = newRooms.some(room => room.status === 1);
-
-        if (!isInValid) {
-            const deleteAll = await roomServices.delAll({
-                roomsId: selectedRowKeys
-            });
-
-            if (deleteAll) {
-                if (deleteAll.data && deleteAll.data.data) {
-                    message.success('Xóa thành công');
-                    setselectedRowKeys([]);
-                    getDataRooms();
-                } else {
-                    message.error('Xóa thất bại');
-                }
+        if (deleteMany) {
+            if (deleteMany.data && deleteMany.data.data) {
+                message.success(`Xóa ${selectedRowKeys.length} hợp đồng thành công`);
+                getDataContracts();
+            } else {
+                message.error(`Xóa ${selectedRowKeys.length} hợp đồng thất bại`);
             }
-        } else {
-            const draftRooms = newRooms.filter(room => room.status === 1);
-
-            message.warning(`Có ${draftRooms.length} phòng đang cho thuê, bạn không thể xóa!`);
         }
-       
+
     };
 
     const onClickAddNew = () => {
-        setRoomModal({
-            ...roomModal,
+        setContractModal({
+            ...contractModal,
             isOpen: true,
-            roomEdited: {},
-            title: 'Tạo mới',
-            type: 'create'
+            contractEdited: {}
         });
     };
 
-    const toggleRoomModal = () => {
-        setRoomModal({
-            ...roomModal,
-            isOpen: !roomModal.isOpen
-        });
-    };
-
-    const toggleModalAddMoreRoom = () => {
-        setIsOpenAddMoreRoom(!isOpenAddMoreRoom);
-    };
-
-    const callbackRoomModal = () => {
-        getDataRooms();
+    const callbackModalContract = () => {
+        getDataContracts();
     };
 
     return (
         <div style={{padding: 10}}>
             <Row>
                 <Col xs={{span: 24, offset: 0}} md={{span: 12, offset: 0}}>
-                    <Title level={4}>QUẢN LÝ PHÒNG TRỌ</Title>
+                    <Title level={4}>QUẢN LÝ HỢP ĐỒNG</Title>
                 </Col>
                 <Col xs={{span: 24, offset: 0}} md={{span: 12, offset: 0}} className='flex-row' style={{justifyContent: 'flex-end'}}>
                     <Select
@@ -409,10 +327,6 @@ const RoomsMotel = props => {
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
                     </Button> &nbsp;
-                    <Button onClick={() => {setIsOpenAddMoreRoom(true)}} disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' >
-                        <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
-                        Thêm nhiều
-                    </Button> &nbsp;
                     <Popconfirm
                         disabled={selectedRowKeys.length > 0 ? false : true}
                         placement="bottom"
@@ -428,27 +342,25 @@ const RoomsMotel = props => {
                     </Popconfirm>
                 </Col>
             </Row>
+            
             <Spin spinning={isShowLoadingTable} tip='Loading...'>
                 <Row style={{paddingTop: '10px'}}>
-                    <Table bordered size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={rooms} />
+                    <Table bordered size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={contracts} />
                 </Row>
             </Spin>
-            <RoomModal
-                roomEdited={roomModal.roomEdited}
-                title = {roomModal.title}
-                type = {roomModal.type}
-                block={blocks.find(block => block.id === blockSelected)}
-                isOpen={roomModal.isOpen}
-                toggleModal={toggleRoomModal}
-                callback={callbackRoomModal}
-            />
-            <AddMoreRoom 
-                isOpen={isOpenAddMoreRoom}
-                toggleModal={toggleModalAddMoreRoom}
-                block={blocks.find(block => block.id === blockSelected)}
+            <ModalContract
+                isOpen={contractModal.isOpen}
+                blockSelected={blockSelected}
+                toggle={() => {setContractModal({...contractModal, isOpen: !contractModal.isOpen})}}
+                callback={callbackModalContract}
+                contractEdited = {contractModal.contractEdited}
             />
         </div>
     );
+};
+
+Contracts.propTypes = {
+    
 };
 
 const mapDispatchToProps = {
@@ -461,7 +373,4 @@ function mapStateToProps(state) {
     };
 }
 
-RoomsMotel.propTypes = {
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(RoomsMotel);
+export default connect(mapStateToProps, mapDispatchToProps)(Contracts);

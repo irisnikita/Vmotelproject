@@ -31,6 +31,7 @@ require('./routes/defaultService')(app);
 require('./routes/unit')(app);
 require('./routes/upload')(app);
 require('./routes/customer')(app);
+require('./routes/contract')(app);
 
 server.listen(PORT, () => {
     console.log('Server is run as port: ', PORT)

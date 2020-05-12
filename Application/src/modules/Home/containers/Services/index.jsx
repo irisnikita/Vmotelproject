@@ -140,19 +140,23 @@ const Services = props => {
 
         if (getServices) {
             if (getServices.data && getServices.data.data) {
-                const {services} = getServices.data.data;
+                const {services = []} = getServices.data.data;
 
-                const draftServices = services.map(service => ({
-                    key: service.id,
-                    edit: service.id,
-                    idUnit: service.idUnit,
-                    nameService: service.nameService,
-                    price: service.price,
-                    nameUnit: service.nameUnit,
-                    description: service.description
-                }));
-
-                setServices(draftServices ? draftServices : []);
+                if (services !== null) {
+                    const draftServices = services.map(service => ({
+                        key: service.id,
+                        edit: service.id,
+                        idUnit: service.idUnit,
+                        nameService: service.nameService,
+                        price: service.price,
+                        nameUnit: service.nameUnit,
+                        description: service.description
+                    }));
+    
+                    setServices(draftServices ? draftServices : []);
+                } else {
+                    setServices([]);
+                }
             }
         }
 

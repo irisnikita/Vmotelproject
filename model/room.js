@@ -11,6 +11,24 @@ const Room = {
         let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
         return connection.query(query, [idBlock], callback);
     },
+    getUserRoom: (id) => {
+        let query = 'SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ? ';
+        let nameRooms = [];
+
+        connection.query(query, [id], (err, rows) => {
+            if (!err) {
+                nameRooms = JSON.parse(JSON.stringify(rows))
+                return JSON.parse(JSON.stringify(rows))
+            }
+        })
+
+        return nameRooms;
+    },
+    getNoMatch: (req, callback) => {
+        const { idBlock = '' } = req.query;
+        let query = 'SELECT R.* FROM ROOMS R LEFT JOIN USER_ROOM UR ON R.id = UR.idRoom WHERE UR.idRoom IS NULL AND idBlock = ?'
+        return connection.query(query, [idBlock], callback)
+    },
     delete: (req, callback) => {
         const { id = '' } = req.params;
         let query = 'DELETE FROM ROOMS WHERE id = ?'
@@ -32,7 +50,7 @@ const Room = {
         return connection.query(query, [nameRoom, floor, square, price, description, maxPeople, id], callback)
     },
     get: (id, callback) => {
-        let query = 'SELECT * FROM USERS WHERE id = ?';
+        let query = 'SELECT * FROM ROOMS WHERE id = ?';
         return connection.query(query, [id], callback);
     }
 }

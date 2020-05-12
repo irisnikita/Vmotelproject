@@ -2,6 +2,7 @@
 const express = require('express');
 const customRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
+const connection = require('../database');
 
 // Model
 const customerModel = require('../model/customer');
@@ -11,14 +12,52 @@ const customRouter = (app) => {
     customRouters.use(authMiddleware.isAuth)
 
     customRouters.get('/get-customers', (req, res) => {
-        customerModel.getAll(req, (err, rows) => {
+        customerModel.getAll(req, async (err, rows) => {
             if (!err) {
+                const getUserRoom = (rows, callback) => {
+                    let UserRooms = [];
+                    let pending = rows.length;
+
+                    rows.forEach(row => {
+                        let query = 'SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ? ';
+
+                        connection.query(query, [row.id], (err, userRoom) => {
+                            if (!err) {
+                                UserRooms.push({
+                                    ...row,
+                                    rooms: JSON.parse(JSON.stringify(userRoom))
+                                })
+                                if (0 === --pending) {
+                                    callback(UserRooms)
+                                }
+                            }
+                        })
+                    })
+                }
+
+                if (rows.length > 0) {
+                    getUserRoom(JSON.parse(JSON.stringify(rows)), (userRooms) => {
+                        res.send({
+                            status: res.statusCode,
+                            message: 'Get customers success',
+                            data: {
+                                customers: userRooms
+                            }
+                        })
+                    })
+                } else {
+                    res.send({
+                        status: res.statusCode,
+                        message: 'Get customers success',
+                        data: {
+                            customers: []
+                        }
+                    })
+                }
+
+            } else {
                 res.send({
-                    status: res.statusCode,
-                    message: 'Get customers success',
-                    data: {
-                        customers: rows
-                    }
+                    message: 'Can\'t get customers'
                 })
             }
         })

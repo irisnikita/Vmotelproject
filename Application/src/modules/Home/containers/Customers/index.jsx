@@ -18,9 +18,8 @@ import CustomerModal from './components/CustomerModal';
 import {fortmatName} from 'Src/utils';
 
 const {Title} = Typography;
-const {Option} = Select;
 
-const hideField = ['id', 'key', 'actions', 'userName', 'pass', 'identifyFront', 'identifyBack', 'role', 'province', 'avatar', 'idOwner', 'address'];
+const hideField = ['id', 'key', 'actions', 'userName', 'pass', 'rooms', 'identifyFront', 'identifyBack', 'role', 'province', 'avatar', 'idOwner', 'address'];
 
 const Customers = props => {
     // Props
@@ -77,15 +76,29 @@ const Customers = props => {
             key:'phoneNumber'
         },
         {
-            title: <div style={{textAlign: 'center'}}>Trạng thái</div>,
+            title: 'Trạng thái',
             dataIndex: 'status',
-            key:'status'
+            key:'status',
+            render: (rooms) => {
+                if (rooms.length > 0) {
+                    return <div style={{color: '#13c2c2'}}>
+                        <i className='icon-check_circle' /> &nbsp;
+                            Đã thuê
+                    </div>;
+                } else {
+                    return <div style={{color: '#f5222d'}}>
+                        <i className='icon-error'  /> &nbsp;
+                            Chưa thuê
+                    </div>;
+                }
+            }
         },
         {
             title: 'Phòng',
-            dataIndex: 'room',
-            key:'room',
-            ellipsis: true
+            dataIndex: 'rooms',
+            key:'rooms',
+            ellipsis: true,
+            render: (rooms) => <div className='flex-row'>{rooms && rooms.length > 0 ? rooms.map(room => <div key={room.nameRoom} style={{marginRight: '2px'}}>{`${room.nameRoom},`}</div>) : 'Không có'}</div> 
         },
         {
             title: 'Đại diện phòng',
@@ -109,6 +122,7 @@ const Customers = props => {
 
                 customers = customers.map(customer => ({
                     ...customer,
+                    status: customer.rooms,
                     key: customer.id,
                     actions: customer.id
                 }));
@@ -121,17 +135,25 @@ const Customers = props => {
     };
 
     const onConfirmRemove = async (id) => {
-        const removeCustomer = await customerServices.del({
-            id
-        });
+        const customer = customers.find(customer => customer.id === id);
 
-        if (removeCustomer) {
-            if (removeCustomer.data && removeCustomer.data.data) {
-                message.success('Xóa khách hàng thành công');
+        if (customer.rooms.length > 0) {
+            message.error('Khách hàng đang thuê không thể xóa được !');
+            
+        } else {
+            const removeCustomer = await customerServices.del({
+                id
+            });
+
+            if (removeCustomer) {
+                if (removeCustomer.data && removeCustomer.data.data) {
+                    message.success('Xóa khách hàng thành công');
                 
-                getDataCustomers();
+                    getDataCustomers();
+                }
             }
         }
+       
     };
 
     const onClickEdit = (id) => {
@@ -161,18 +183,31 @@ const Customers = props => {
     };
 
     const onConfirmDelete = async () => {
-        const deleteCustomers = await customerServices.delAll({
-            customersId: selectedRowKeys
+        const newCustomers = customers.filter(customer => {
+            return selectedRowKeys.some(row => row === customer.id);
         });
 
-        if (deleteCustomers) {
-            if (deleteCustomers.data && deleteCustomers.data.data) {
-                message.success('Xóa các khách hàng thành công!');
-                getDataCustomers();
-            } else {
-                message.error('Xóa các khách hàng thất bại!');
+        const isInValid = newCustomers.some(customer => customer.rooms.length > 0);
+
+        if (!isInValid) {
+            const deleteCustomers = await customerServices.delAll({
+                customersId: selectedRowKeys
+            });
+
+            if (deleteCustomers) {
+                if (deleteCustomers.data && deleteCustomers.data.data) {
+                    message.success('Xóa các khách hàng thành công!');
+                    getDataCustomers();
+                } else {
+                    message.error('Xóa các khách hàng thất bại!');
+                }
             }
+        } else {
+            const draftCustomer = newCustomers.filter(customer => customer.rooms.length > 0);
+
+            message.error(`Có ${draftCustomer.length} khách hàng đang thuê, bạn không thể xóa được!`);
         }
+       
     };
 
     const showRenderInfoUser = (key, value) => {
@@ -240,7 +275,7 @@ const Customers = props => {
                                                 Object.keys(records).map(record => {
                                                     const isHide = hideField.some(field => record === field);
 
-                                                    if (!isHide) {
+                                                    if (!isHide && typeof records[record] !== 'object') {
                                                         return <Col span='12' key={record}>
                                                             <strong>{fortmatName(record)}:</strong> &nbsp;
                                                             {showRenderInfoUser(record, records[record])}
