@@ -8,7 +8,7 @@ const redisContract = (req, res, next) => {
         if (err) {
             console.log(err);
             res.send({
-                message: 'Can\'t get contracts'
+                message: 'Can\'t get contracts redis'
             })
             next()
         }
@@ -16,7 +16,7 @@ const redisContract = (req, res, next) => {
         if (data !== null) {
             res.send({
                 status: res.statusCode,
-                message: 'Get contracts success',
+                message: 'Get contracts success redis',
                 data: {
                     contracts: JSON.parse(data)
                 }
@@ -34,7 +34,7 @@ const redisCustomer = (req, res, next) => {
         if (err) {
             console.log(err);
             res.send({
-                message: 'Can\'t get customers'
+                message: 'Can\'t get customers redis'
             })
             next()
         }
@@ -42,7 +42,7 @@ const redisCustomer = (req, res, next) => {
         if (data !== null) {
             res.send({
                 status: res.statusCode,
-                message: 'Get customers success',
+                message: 'Get customers success redis',
                 data: {
                     customers: JSON.parse(data)
                 }
