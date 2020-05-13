@@ -45,12 +45,11 @@ const Customer = {
             avatar,
             phoneNumber,
             note,
-            status,
         } = req.body;
         const { userId } = req.query;
 
         let query =
-            "INSERT INTO CUSTOMERS (codeUser, fullName, identifyFront, identifyBack, dateBirth, address, sex, job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note, status) VALUES (?)";
+            "INSERT INTO CUSTOMERS (codeUser, fullName, identifyFront, identifyBack, dateBirth, address, sex, job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note) VALUES (?)";
         return connection.query(
             query,
             [
@@ -69,8 +68,7 @@ const Customer = {
                     avatar,
                     phoneNumber,
                     userId,
-                    note,
-                    status,
+                    note
                 ],
             ],
             callback
