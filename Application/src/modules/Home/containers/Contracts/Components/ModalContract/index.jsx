@@ -184,6 +184,7 @@ const ModalContract = props => {
                 deposit: valueForm.deposit,
                 dayPay: valueForm.dayPay,
                 note: valueForm.note,
+                idBlock: blockSelected,
                 userRooms
             };
 

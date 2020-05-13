@@ -7,6 +7,7 @@ const FriendController = require('../controllers/FriendController');
 const userModel = require('../model/user');
 const jwtHelper = require('../helpers/jwt.helper');
 const bcrypt = require('bcrypt');
+const { mailRegisterSucces } = require('../node_mailer');
 
 // AppConfig
 const appConfig = require('../constant');
@@ -61,6 +62,12 @@ const userRoute = (app) => {
         userModel.register(req, (err, rows, fields) => {
             if (!err) {
                 if (rows) {
+                    mailRegisterSucces({
+                        to: req.body.email,
+                        subject: 'Bạn đã đăng ký thành công tài khoản',
+                        text: 'Cảm ơn bạn đã dùng thử ứng dụng quản lý khu trọ của chúng tôi, chúng bạn có một sự trải nghiệm tuyêt vời, xin cảm ơn!'
+                    })
+
                     res.send({
                         status: res.statusCode,
                         message: 'Register Success',

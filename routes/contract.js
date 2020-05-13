@@ -3,17 +3,19 @@ const express = require('express');
 const contractRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 const connection = require('../database');
+const { redisContract } = require('../Middleware/Redis')
+const redis_client = require('../redis');
 
 // Model
 const contractModel = require('../model/contract');
 const roomImageModel = require('../model/roomImage');
 
-const contractRouter = (app) => {
 
+const contractRouter = (app) => {
     contractRouters.use(authMiddleware.isAuth)
 
-    contractRouters.get('/get-contracts', (req, res) => {
-        contractModel.getAll(req, async (err, rows, fields) => {
+    contractRouters.get('/get-contracts', redisContract, (req, res) => {
+        contractModel.getAll(req, (err, rows) => {
             if (!err) {
                 const getUser = (contracts, callback) => {
                     let Users = [];
@@ -41,6 +43,8 @@ const contractRouter = (app) => {
                 if (rows.length > 0) {
                     getUser(JSON.parse(JSON.stringify(rows)), (Users) => {
                         if (Users) {
+                            const redis_client = require('../redis');
+                            redis_client.setex(`contracts:${req.query.idBlock}`, 3600, JSON.stringify(Users))
                             res.send({
                                 status: res.statusCode,
                                 message: 'Get contracts success',
@@ -65,10 +69,12 @@ const contractRouter = (app) => {
                 }
             }
         })
-
     })
 
     contractRouters.post('/create', (req, res) => {
+        redis_client.del(`contracts:${req.body.idBlock}`)
+        redis_client.del(`customers:${req.query.userId}`)
+
         contractModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -87,6 +93,7 @@ const contractRouter = (app) => {
     })
 
     contractRouters.post('/create-user-room', (req, res) => {
+        redis_client.del(`customers:${req.query.userId}`)
         contractModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -105,6 +112,9 @@ const contractRouter = (app) => {
     })
 
     contractRouters.delete('/delete/:id', (req, res) => {
+        redis_client.del(`contracts:${req.query.idBlock}`)
+        redis_client.del(`customers:${req.query.userId}`)
+
         contractModel.delete(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -123,6 +133,9 @@ const contractRouter = (app) => {
     })
 
     contractRouters.put('/update/:id', (req, res) => {
+        redis_client.del(`contracts:${req.body.idBlock}`)
+        redis_client.del(`customers:${req.query.userId}`)
+
         contractModel.update(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -141,6 +154,9 @@ const contractRouter = (app) => {
     })
 
     contractRouters.post('/delete-all', (req, res) => {
+        redis_client.del(`contracts:${req.body.idBlock}`)
+        redis_client.del(`customers:${req.query.userId}`)
+
         contractModel.deleteAll(req, (err, rows) => {
             if (!err) {
                 res.send({
