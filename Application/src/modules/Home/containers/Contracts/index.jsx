@@ -220,8 +220,11 @@ const Contracts = props => {
     };
 
     const onConfirmRemove = async (id) => {
+        const contract = contracts.find(contract => contract.id === id);
+
         const deleteContract = await contractServices.del({
-            id
+            id,
+            idBlock: contract.idBlock
         });
 
         if (deleteContract) {
@@ -269,7 +272,8 @@ const Contracts = props => {
 
     const onConfirmDelete = async () => {
         const deleteMany = await contractServices.delAll({
-            contractsId: selectedRowKeys
+            contractsId: selectedRowKeys,
+            idBlock: blockSelected
         });
 
         if (deleteMany) {

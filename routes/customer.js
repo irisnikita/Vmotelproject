@@ -3,7 +3,8 @@ const express = require('express');
 const customRouters = express.Router();
 const authMiddleware = require('../Middleware/AuthMiddleware');
 const connection = require('../database');
-
+const { redisCustomer } = require('../Middleware/Redis');
+const redis_client = require('../redis');
 // Model
 const customerModel = require('../model/customer');
 
@@ -11,7 +12,7 @@ const customRouter = (app) => {
 
     customRouters.use(authMiddleware.isAuth)
 
-    customRouters.get('/get-customers', (req, res) => {
+    customRouters.get('/get-customers', redisCustomer, (req, res) => {
         customerModel.getAll(req, async (err, rows) => {
             if (!err) {
                 const getUserRoom = (rows, callback) => {
@@ -37,6 +38,10 @@ const customRouter = (app) => {
 
                 if (rows.length > 0) {
                     getUserRoom(JSON.parse(JSON.stringify(rows)), (userRooms) => {
+                        const redis_client = require('../redis');
+
+                        redis_client.setex(`customers:${req.query.userId}`, 3600, JSON.stringify(userRooms))
+
                         res.send({
                             status: res.statusCode,
                             message: 'Get customers success',
@@ -64,6 +69,8 @@ const customRouter = (app) => {
     })
 
     customRouters.post('/create', (req, res) => {
+        redis_client.del(`customers:${req.query.userId}`)
+
         customerModel.create(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -82,6 +89,8 @@ const customRouter = (app) => {
     })
 
     customRouters.delete('/delete/:id', (req, res) => {
+        redis_client.del(`customers:${req.query.userId}`)
+
         customerModel.delete(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -100,6 +109,8 @@ const customRouter = (app) => {
     })
 
     customRouters.put('/update/:id', (req, res) => {
+        redis_client.del(`customers:${req.query.userId}`)
+
         customerModel.update(req, (err, rows) => {
             if (!err) {
                 res.send({
@@ -118,6 +129,8 @@ const customRouter = (app) => {
     })
 
     customRouters.post('/delete-all', (req, res) => {
+        redis_client.del(`customers:${req.query.userId}`)
+
         customerModel.deleteAll(req, (err, rows) => {
             if (!err) {
                 res.send({
