@@ -12,43 +12,65 @@ const roomRouter = (app) => {
     roomRouters.use(authMiddleware.isAuth)
 
     roomRouters.get('/get-rooms/:id?', (req, res) => {
-        const { isMatch = false } = req.query;
+        const { isMatch = false, type = '' } = req.query;
         const { id } = req.params;
 
-        if (id) {
-            roomModel.get(id, (err, rows) => {
-                if (!err) {
-                    res.send({
-                        status: res.statusCode,
-                        message: 'Get room success',
-                        data: {
-                            room: rows[0]
+        switch (type) {
+            case '':
+                if (id) {
+                    roomModel.get(id, (err, rows) => {
+                        if (!err) {
+                            res.send({
+                                status: res.statusCode,
+                                message: 'Get room success',
+                                data: {
+                                    room: rows[0]
+                                }
+                            })
+                        } else {
+                            res.send({
+                                message: 'Can\'t get room'
+                            })
                         }
                     })
                 } else {
-                    res.send({
-                        message: 'Can\'t get room'
-                    })
-                }
-            })
-        } else {
-            if (isMatch) {
-                roomModel.getNoMatch(req, (err, rows) => {
-                    if (!err) {
-                        res.send({
-                            status: res.statusCode,
-                            message: 'Get rooms success',
-                            data: {
-                                rooms: rows
+                    if (isMatch) {
+                        roomModel.getNoMatch(req, (err, rows) => {
+                            if (!err) {
+                                res.send({
+                                    status: res.statusCode,
+                                    message: 'Get rooms success',
+                                    data: {
+                                        rooms: rows
+                                    }
+                                })
                             }
                         })
                     }
-                })
-            }
-            else {
-                roomModel.getAll(req, async (err, rows, fields) => {
+                    else {
+                        roomModel.getAll(req, async (err, rows, fields) => {
 
-                    if (!err) {
+                            if (!err) {
+                                res.send({
+                                    status: res.statusCode,
+                                    message: 'Get rooms success',
+                                    data: {
+                                        rooms: rows
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }
+
+                break;
+            case 'query':
+                roomModel.getQuerry(req, (err, rows) => {
+                    if (err) {
+                        res.send({
+                            message: err
+                        })
+                    } else {
                         res.send({
                             status: res.statusCode,
                             message: 'Get rooms success',
@@ -58,7 +80,8 @@ const roomRouter = (app) => {
                         })
                     }
                 })
-            }
+            default:
+                break;
         }
 
     })

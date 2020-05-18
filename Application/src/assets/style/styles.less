@@ -30,8 +30,7 @@
 
 .layout {
   background-color: #fff;
-  height: 90vh;
- 
+  min-height: 90vh;
   .right-content {
     background-color: #fff;
   }
@@ -71,6 +70,46 @@
     display: none !important;
   }
 }
+.box-room {
+  cursor: pointer;
+  margin-bottom: 10px;
+  .status-room {
+    color: #fff;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+    background-color: #13c2c2;
+    transition: all 300ms, border-radius 200ms;
+    .name-room {
+      font-size: 12px;
+      position: absolute;
+      top: 10px
+    }
+    .desc-room {
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.452);
+      padding: 0px 10px;
+      width: 100%;
+      position: absolute;
+      bottom: 0px;
+    }
+  }
+
+  &:hover .status-room {
+    box-shadow: 0px 0px 10px gray;
+      transform: scale(1.1);
+  }
+  &:active .status-room {
+    transform: scale(0.9);
+  }
+}
+
 
 .wrap-btn-more {
   display: none; 
@@ -82,6 +121,24 @@
 
 .menu-header {
   display: flex;
+}
+
+.carousel{
+  text-align: center;
+  height: 250px;
+  line-height: 250px;
+  background: #8a8a8a60;
+  overflow: hidden;
+}
+
+
+.icon-circle {
+  border-radius: 50%;
+ padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
 }
 
 .button-intro {

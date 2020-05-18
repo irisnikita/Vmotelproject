@@ -11,6 +11,28 @@ const Room = {
         let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
         return connection.query(query, [idBlock], callback);
     },
+    getQuerry: (req, callback) => {
+        const { idBlock, userId, status } = req.query;
+
+        console.log(idBlock, userId, status)
+        let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
+        let query2 = `SELECT * FROM ROOMS WHERE status = ? AND idBlock = ?`;
+        let query4 = `SELECT R.* FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id WHERE B.idOwner = ?`
+        let query3 = `SELECT R.* FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id WHERE B.idOwner = ? AND R.status = ?`;
+
+        if (+idBlock === -1 && +status === -1) {
+            return connection.query(query4, [userId], callback)
+        } else if (+idBlock === -1 && +status !== -1) {
+            return connection.query(query3, [userId, status], callback)
+        } else {
+            if (+status === -1) {
+                return connection.query(query, [idBlock], callback)
+            } else {
+                return connection.query(query2, [status, idBlock], callback)
+            }
+        }
+
+    },
     getUserRoom: (id) => {
         let query = 'SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ? ';
         let nameRooms = [];

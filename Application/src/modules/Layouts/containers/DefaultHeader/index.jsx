@@ -194,7 +194,7 @@ class DefaultHeader extends Component {
                         <Divider type='vertical' />
                     </div>
                     {
-                        !_.isEmpty(userLogin) ? <Dropdown className='wrap-btn-more' overlay={<Menu selectedKeys={[this.props.path]}>
+                        !_.isEmpty(userLogin) ? <Dropdown className='wrap-btn-more' overlayStyle={{width: '100%'}} overlay={<Menu selectedKeys={[this.props.path]}>
                             {this.showRenderMenu()}
                         </Menu>} trigger={['click']}>
                             <div className='btn-menu-circle'>
