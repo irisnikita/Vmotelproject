@@ -11,14 +11,18 @@ const Room = {
         let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
         return connection.query(query, [idBlock], callback);
     },
+    getUserRent: (req, callback) => {
+        const { idRoom = '' } = req.query;
+        let query = 'SELECT C.fullName FROM USER_ROOM UR INNER JOIN CUSTOMERS C ON UR.idUser = C.id  WHERE UR.idRoom = ?'
+        return connection.query(query, [idRoom], callback)
+    },
     getQuerry: (req, callback) => {
         const { idBlock, userId, status } = req.query;
 
-        console.log(idBlock, userId, status)
-        let query = 'SELECT * FROM ROOMS WHERE idBlock = ? ';
-        let query2 = `SELECT * FROM ROOMS WHERE status = ? AND idBlock = ?`;
-        let query4 = `SELECT R.* FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id WHERE B.idOwner = ?`
-        let query3 = `SELECT R.* FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id WHERE B.idOwner = ? AND R.status = ?`;
+        let query = 'SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE R.idBlock = ? ';
+        let query2 = `SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE status = ? AND R.idBlock = ?`;
+        let query4 = `SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ?`
+        let query3 = `SELECT R.*, B.nameBlock, C.startDate FROM ROOMS R INNER JOIN BLOCKS B ON R.idBlock = B.id LEFT JOIN CONTRACTS C ON R.id = C.idRoom WHERE B.idOwner = ? AND R.status = ?`;
 
         if (+idBlock === -1 && +status === -1) {
             return connection.query(query4, [userId], callback)

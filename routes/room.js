@@ -158,6 +158,20 @@ const roomRouter = (app) => {
         })
     })
 
+    roomRouters.get('/get-user-rent', (req, res) => {
+        roomModel.getUserRent(req, (err, rows) => {
+            if (!err) {
+                res.send({
+                    status: res.statusCode,
+                    message: 'Get user rent success',
+                    data: {
+                        userRents: rows
+                    }
+                })
+            }
+        })
+    })
+
     roomRouters.post('/uploadImage', (req, res) => {
         roomImageModel.create(req, (err, rows, fields) => {
             if (!err) {
