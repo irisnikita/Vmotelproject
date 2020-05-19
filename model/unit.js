@@ -4,7 +4,6 @@ const unit = {
     create: (req, callback) => {
         const { services } = req.body;
 
-        console.log(services)
         let query = 'INSERT INTO SERVICES (nameService, price, idUnit, description, idBlock) VALUES ?'
         return connection.query(query, [services.map(service => [service.nameService, service.price, service.idUnit, service.description, service.idBlock])], callback)
     },

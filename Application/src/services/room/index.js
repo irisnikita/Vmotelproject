@@ -10,6 +10,9 @@ export function get(params) {
 export function getList(params) {
     return services.getList({...params, API: appConfig.API + '/room/get-rooms'});
 }
+export function getUserRent(params) {
+    return services.getList({...params, API: appConfig.API + '/room/get-user-rent'});
+}
 export function del(params) {
     return services.del({...params, API: appConfig.API + '/room/delete'});
 }

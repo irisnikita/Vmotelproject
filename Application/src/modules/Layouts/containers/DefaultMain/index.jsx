@@ -52,8 +52,7 @@ class DefaultMain extends Component {
                                                 <Route key={idx} path={route.path} exact={route.exact} name={route.name} render={props => (
                                                     <route.component {...props} />
                                                 )} />) : null;
-                                        }
-                                        )}
+                                        })}
                                         <Redirect to={'/home'} />
                                     </Switch>
                                 </Suspense>

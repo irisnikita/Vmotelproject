@@ -13,10 +13,10 @@ const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "access-token-secre
  * @param {*} res
  * @param {*} next
  */
-let isAuth = async(req, res, next) => {
+let isAuth = async (req, res, next) => {
     const tokenFromClient = req.body.token || req.query.token || req.headers['x-access-token'];
 
-    if(tokenFromClient) {
+    if (tokenFromClient) {
         try {
             const decoded = await jwtHelper.verifyToken(tokenFromClient, accessTokenSecret);
 
@@ -26,7 +26,7 @@ let isAuth = async(req, res, next) => {
             next();
 
         } catch (error) {
-            
+
             return res.status(401).json({
                 message: 'Unauthorized.'
             })
