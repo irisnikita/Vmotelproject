@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Button, Col, Carousel, Row, Spin} from 'antd';
+import {Modal, Button, Col, Carousel, Row, Spin, Dropdown, Menu} from 'antd';
 import _ from 'lodash';
 import numeral from 'numeral';
 import moment from 'moment';
 
 // Icons
-import {AuditOutlined} from '@ant-design/icons';
+import {AuditOutlined, DownOutlined} from '@ant-design/icons';
 
 // Services
 import * as roomServices from 'Src/services/room';
@@ -109,52 +109,62 @@ const ViewRoomModal = (props) => {
                     </Col>
                     <Col span={12}>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Khu trọ:</strong></Col>
-                            <Col span={17}>{room.nameBlock}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Khu trọ:</strong></Col>
+                            <Col span={16}>{room.nameBlock}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Mã phòng:</strong></Col>
-                            <Col span={17}>{room.codeRoom}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Mã phòng:</strong></Col>
+                            <Col span={16}>{room.codeRoom}</Col>
                         </Row>
                         <Row >
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Tên phòng:</strong></Col>
-                            <Col span={17}>{room.nameRoom}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Tên phòng:</strong></Col>
+                            <Col span={16}>{room.nameRoom}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Tầng:</strong></Col>
-                            <Col span={17}>{room.floor}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Tầng:</strong></Col>
+                            <Col span={16}>{room.floor}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Số người tối đa:</strong></Col>
-                            <Col span={17}>{room.maxPeople}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Số người tối đa:</strong></Col>
+                            <Col span={16}>{room.maxPeople}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Diện tích:</strong></Col>
-                            <Col span={17}>{room.square}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Diện tích:</strong></Col>
+                            <Col span={16}>{room.square}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Đơn giá:</strong></Col>
-                            <Col span={17}>{numeral(room.price).format(0,0)} vnđ</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Đơn giá:</strong></Col>
+                            <Col span={16}>{numeral(room.price).format(0,0)} vnđ</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Mô tả:</strong></Col>
-                            <Col span={17}>{room.description}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Mô tả:</strong></Col>
+                            <Col span={16}>{room.description}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Ngày thuê:</strong></Col>
-                            <Col span={17}>{room.startDate ? moment(room.startDate).format('DD/MM/YYYY') : 'Chưa thuê'}</Col>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Ngày thuê:</strong></Col>
+                            <Col span={16}>{room.startDate ? moment(room.startDate).format('DD/MM/YYYY') : 'Chưa thuê'}</Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Khách thuê:</strong></Col>
-                            <Col span={17}>
-                                {userRents.length > 0 ? userRents.map(user => {
-                                    return <div key={user.fullName}>{user.fullName}</div>;
-                                }) : 'Không có người thuê'}
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Khách thuê:</strong></Col>
+                            <Col span={16}>
+                                <Dropdown
+                                    overlay={
+                                        <Menu>
+                                            {userRents.length > 0 ? userRents.map((user, index) => {
+                                                return <div key={user.fullName} style={{padding: '5px 10px'}}>{`${index}. ${user.fullName}`}</div>;
+                                            }) : <div style={{padding: '5px 10px'}}>Không có người thuê</div>}
+                                        </Menu>
+                                    }
+                                    trigger={['click']}
+                                >
+                                    <Button size='small'>{`${userRents.length} người thuê`} <DownOutlined /></Button>
+                                </Dropdown>
+                               
                             </Col>
                         </Row>
                         <Row>
-                            <Col span={7} style={{textAlign: 'left'}}><strong>Người đại diện:</strong></Col>
-                            <Col span={17}>
+                            <Col span={8} style={{textAlign: 'left'}}><strong>Người đại diện:</strong></Col>
+                            <Col span={16}>
                                 {userRents.find(user => user.id === room.idSlave) && userRents.find(user => user.id === room.idSlave).fullName }
                             </Col>
                         </Row>

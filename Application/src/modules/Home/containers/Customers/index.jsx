@@ -80,7 +80,7 @@ const Customers = props => {
             dataIndex: 'status',
             key:'status',
             render: (rooms) => {
-                if (rooms.length > 0) {
+                if (rooms && rooms.length > 0) {
                     return <div style={{color: '#13c2c2'}}>
                         <i className='icon-check_circle' /> &nbsp;
                             Đã thuê
@@ -137,7 +137,7 @@ const Customers = props => {
     const onConfirmRemove = async (id) => {
         const customer = customers.find(customer => customer.id === id);
 
-        if (customer.rooms.length > 0) {
+        if (customer.rooms && customer.rooms.length > 0) {
             message.error('Khách hàng đang thuê không thể xóa được !');
             
         } else {
@@ -187,7 +187,7 @@ const Customers = props => {
             return selectedRowKeys.some(row => row === customer.id);
         });
 
-        const isInValid = newCustomers.some(customer => customer.rooms.length > 0);
+        const isInValid = false;
 
         if (!isInValid) {
             const deleteCustomers = await customerServices.delAll({

@@ -210,35 +210,34 @@ class DefaultHeader extends Component {
                     
                     {
                         !_.isEmpty(userLogin) ? <div className='flex-row'>
+                            
                             <div style={{fontSize: 15, fontWeight: 600}}>
                                 {userLogin.userName}
                             </div>
-                            <Popover placement='bottomRight' content={
-                                <div className='list-menu-user'>
-                                    <div className='item-user'>
-                                        <i className='icon-person' style={{marginRight: 5}} />
+                            <Dropdown overlay={<Menu>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-person' style={{marginRight: 5}} />
                                         Thông tin cá nhân
-                                    </div>
-                                    <div className='item-user'>
-                                        <i className='icon-settings' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-settings' style={{marginRight: 5}} />
                                         Cấu hình chung
-                                    </div>
-                                    <div  className='item-user'>
-                                        <i className='icon-reorder' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item  className='item-user'>
+                                    <i className='icon-reorder' style={{marginRight: 5}} />
                                         Danh sách dịch vụ
-                                    </div>
-                                    <div className='item-user'>
-                                        <i className='icon-build' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-build' style={{marginRight: 5}} />
                                         Công thức
-                                    </div>
-                                    <div className='item-user' onClick={this.onClickLogout}>
-                                        <i className='icon-exit_to_app' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user' onClick={this.onClickLogout}>
+                                    <i className='icon-exit_to_app' style={{marginRight: 5}} />
                                         Đăng xuất
-                                    </div>
-                                </div>
-                            }>
+                                </Menu.Item>
+                            </Menu>}>
                                 <Avatar  size='large' style={{marginLeft: 10, cursor: 'pointer'}} src='https://nguoinoitieng.tv/images/nnt/96/0/bber.jpg' />
-                            </Popover>
+                            </Dropdown>
                         </div> : 
                             <>
                                 <div className='flex-row menu-header'>

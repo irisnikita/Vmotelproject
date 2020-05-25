@@ -435,8 +435,8 @@ const RoomsMotel = props => {
             </Spin>
             <RoomModal
                 roomEdited={roomModal.roomEdited}
-                title = {roomModal.title}
-                type = {roomModal.type}
+                title={roomModal.title}
+                type={roomModal.type}
                 block={blocks.find(block => block.id === blockSelected)}
                 isOpen={roomModal.isOpen}
                 toggleModal={toggleRoomModal}
