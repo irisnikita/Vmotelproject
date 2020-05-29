@@ -4,6 +4,7 @@ import {motion} from 'framer-motion';
 import {Button, Input, Col, Row, Typography, Select, Divider, Popover, Spin} from 'antd';
 import {connect} from 'react-redux';
 import numeral from 'numeral';
+import * as Sentry from '@sentry/browser';
 import _ from 'lodash';
 
 // Components
@@ -17,6 +18,7 @@ import {layout} from 'Layouts/actions';
 
 // Icon
 import {BankOutlined, UserOutlined, DollarCircleOutlined} from '@ant-design/icons';
+import {userLogin} from '../Layouts/actions';
 
 const {Title, Text} = Typography;
 const {Option} = Select;
@@ -174,10 +176,27 @@ const  Home = (props) => {
         setIsOpenModal(!isOpenModal);
     };
 
+    const methodDoesNotExist = () => {
+        try {
+            const user = undefined;
+
+            if (user.id) {
+                console.log(user.id);
+            }
+
+        } catch (error) {
+            Sentry.withScope((scope) => {
+                scope.setExtra(error);
+                scope.setTag('onClick');
+            });
+        }
+    };
+
     return (
         <div className='home-content'>
             <div className="site-card-wrapper">
                 <Row gutter={16}>
+                    <button onClick={methodDoesNotExist}>Break the world</button>
                     <Col xs={{span: 24}} md={{span: 8}}>
                         <div className='card-info flex-row' onClick={() => {this.props.history.push('/rooms-motel')}}>
                             <BankOutlined style={{fontSize: 40, color: ''}} />
