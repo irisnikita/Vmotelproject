@@ -23,6 +23,8 @@ import {userLogin} from '../Layouts/actions';
 const {Title, Text} = Typography;
 const {Option} = Select;
 
+const PATH = 'Src/modules/Home/index.jsx';
+
 const  Home = (props) => {
     // Props
     const {blocks = []} = props;
@@ -176,27 +178,24 @@ const  Home = (props) => {
         setIsOpenModal(!isOpenModal);
     };
 
-    const methodDoesNotExist = () => {
+    const onClickTest = () => {
         try {
-            const user = undefined;
-
-            if (user.id) {
-                console.log(user.id);
+            if (hello) {
+                console.log(hello);
             }
-
+            
         } catch (error) {
-            Sentry.withScope((scope) => {
-                scope.setExtra(error);
-                scope.setTag('onClick');
-            });
+            console.log(error);
+
+            Sentry.captureException(error);
         }
     };
 
     return (
         <div className='home-content'>
             <div className="site-card-wrapper">
+                <Button onClick={onClickTest}>Test Bug</Button>
                 <Row gutter={16}>
-                    <button onClick={methodDoesNotExist}>Break the world</button>
                     <Col xs={{span: 24}} md={{span: 8}}>
                         <div className='card-info flex-row' onClick={() => {this.props.history.push('/rooms-motel')}}>
                             <BankOutlined style={{fontSize: 40, color: ''}} />
