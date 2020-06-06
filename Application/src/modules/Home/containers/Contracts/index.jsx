@@ -1,14 +1,14 @@
 // Libraries
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {Button, Table,Row,Col, Typography, Tooltip, Spin, Input, Popconfirm, message, Select, Avatar} from 'antd';
-import {connect} from 'react-redux';
+import { Button, Table, Row, Col, Typography, Tooltip, Spin, Input, Popconfirm, message, Select, Avatar } from 'antd';
+import { connect } from 'react-redux';
 import Highlighter from 'react-highlight-words';
 import numeral from 'numeral';
-import {SearchOutlined} from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 
 // Actions
-import {layout} from 'Layouts/actions';
+import { layout } from 'Layouts/actions';
 
 // Components
 import ModalContract from './Components/ModalContract';
@@ -18,11 +18,11 @@ import * as contractServices from 'Src/services/contract';
 import moment from 'moment';
 
 // Utils
-import {capitalize,convertChar} from 'Src/utils';
+import { capitalize, convertChar } from 'Src/utils';
 
 // Antd
-const {Title} = Typography;
-const {Option} = Select;
+const { Title } = Typography;
+const { Option } = Select;
 
 const Contracts = props => {
     // Props
@@ -60,31 +60,31 @@ const Contracts = props => {
     };
 
     const getColumnSearchProps = (dataIndex, name) => ({
-        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
-            <div style={{padding: 8}}>
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
                 <Input
                     ref={searchInput}
                     placeholder={`Tìm ${name}`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{width: 188, marginBottom: 8, display: 'block'}}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
                 />
                 <Button
                     type="primary"
                     onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                     icon={<SearchOutlined />}
                     size="small"
-                    style={{width: 90, marginRight: 8}}
+                    style={{ width: 90, marginRight: 8 }}
                 >
-              Tìm
+                    Tìm
                 </Button>
-                <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
-              Đặt lại
+                <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    Đặt lại
                 </Button>
             </div>
         ),
-        filterIcon: filtered => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}} />,
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
             convertChar(record[dataIndex])
                 .toString()
@@ -100,32 +100,32 @@ const Contracts = props => {
         render: text =>
             searchedColumn === dataIndex ? (
                 <Highlighter
-                    highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
                     searchWords={[searchText]}
                     autoEscape
                     textToHighlight={text.toString()}
                 />
             ) : (
-                text
-            )
+                    text
+                )
     });
 
     const columns = [
         {
             title: '',
             dataIndex: 'edit',
-            key:'edit',
+            key: 'edit',
             width: 100,
-            render: (id)=> <div className='flex-row-center'>
+            render: (id) => <div className='flex-row-center'>
                 <Tooltip title='Sửa'>
-                    <Button onClick={()=>onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
+                    <Button onClick={() => onClickEdit(id)} className='flex-row-center' size='small' shape='circle'>
                         <i className='icon-createmode_editedit' />
                     </Button>
                 </Tooltip> &nbsp;
                 <Tooltip title='Xóa'>
                     <Popconfirm
                         title='Bạn muốn xóa khu trọ/căn hộ này?'
-                        onConfirm={()=>onConfirmRemove(id)}
+                        onConfirm={() => onConfirmRemove(id)}
                         okText='Xóa'
                         cancelText='Hủy'
                     >
@@ -140,35 +140,35 @@ const Contracts = props => {
             title: 'Tên phòng',
             dataIndex: 'nameRoom',
             ...getColumnSearchProps('nameRoom', 'Tên phòng'),
-            key:'nameRoom'
+            key: 'nameRoom'
         },
         {
             title: 'Người đại diện',
             ...getColumnSearchProps('nameLeader', 'Người đại diện'),
             dataIndex: 'nameLeader',
-            key:'nameLeader'
+            key: 'nameLeader'
         },
         {
             title: 'Thời hạn hợp đồng',
             dataIndex: 'timeContract',
-            key:'timeContract'
+            key: 'timeContract'
         },
         {
             title: 'Ngày bắt đầu',
             dataIndex: 'startDate',
-            key:'startDate',
+            key: 'startDate',
             render: (startDate) => <div>{moment(startDate).format('DD/MM/YYYY')}</div>
         },
         {
             title: 'Ngày hết hạn',
             dataIndex: 'endDate',
-            key:'endDate',
-            render: (endDate) => <div>{moment(endDate).format('DD/MM/YYYY')}</div> 
+            key: 'endDate',
+            render: (endDate) => <div>{moment(endDate).format('DD/MM/YYYY')}</div>
         },
         {
             title: 'Tiền đặt cọc',
             dataIndex: 'deposit',
-            key:'deposit',
+            key: 'deposit',
             sorter: (a, b) => a.price - b.price,
             render: (price) => (<div>
                 {numeral(price).format('0,0.00')} vnđ
@@ -184,7 +184,7 @@ const Contracts = props => {
 
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         if (blocks.length > 0) {
 
             // had block in list
@@ -192,7 +192,7 @@ const Contracts = props => {
 
             if (localStorage.getItem('blockSelected') && isHaded) {
                 const defaultBlock = localStorage.getItem('blockSelected');
-    
+
                 setBlockSelected(+defaultBlock);
             } else {
                 setBlockSelected(blocks[0].id);
@@ -200,7 +200,7 @@ const Contracts = props => {
 
         }
 
-    },[blocks]);
+    }, [blocks]);
 
     useEffect(() => {
         if (blockSelected !== null) {
@@ -247,14 +247,14 @@ const Contracts = props => {
 
         if (getContracts) {
             if (getContracts.data && getContracts.data.data) {
-                const {contracts = []} = getContracts.data.data;
+                const { contracts = [] } = getContracts.data.data;
 
                 const newContracts = contracts.map(contract => ({
                     ...contract,
                     key: contract.id,
                     edit: contract.id,
                     nameLeader: contract.fullName,
-                    timeContract:  capitalize(moment(contract.endDate).locale('vi').from(contract.startDate))
+                    timeContract: capitalize(moment(contract.endDate).locale('vi').from(contract.startDate))
                 }));
 
                 setContracts(newContracts);
@@ -265,8 +265,8 @@ const Contracts = props => {
     };
 
     const onChangeBlocks = (value) => {
-        localStorage.setItem('blockSelected',value);
-        
+        localStorage.setItem('blockSelected', value);
+
         setBlockSelected(value);
     };
 
@@ -300,16 +300,16 @@ const Contracts = props => {
     };
 
     return (
-        <div style={{padding: 10}}>
+        <div style={{ padding: 10 }}>
             <Row>
-                <Col xs={{span: 24, offset: 0}} md={{span: 12, offset: 0}}>
+                <Col xs={{ span: 24, offset: 0 }} md={{ span: 12, offset: 0 }}>
                     <Title level={4}>QUẢN LÝ HỢP ĐỒNG</Title>
                 </Col>
-                <Col xs={{span: 24, offset: 0}} md={{span: 12, offset: 0}} className='flex-row' style={{justifyContent: 'flex-end'}}>
+                <Col xs={{ span: 24, offset: 0 }} md={{ span: 12, offset: 0 }} className='flex-row' style={{ justifyContent: 'flex-end' }}>
                     <Select
                         showSearch
                         value={blockSelected}
-                        style={{width: 200}}
+                        style={{ width: 200 }}
                         placeholder="Chọn khu trọ"
                         onChange={onChangeBlocks}
                         optionFilterProp="children"
@@ -318,15 +318,15 @@ const Contracts = props => {
                         }
                     >
                         {
-                            blocks.map(block =>(
+                            blocks.map(block => (
                                 <Option key={block.id} value={block.id}>{block.nameBlock}</Option>
                             ))
                         }
                     </Select>
                 </Col>
             </Row>
-            <Row style={{marginTop: 20}}>
-                <Col xs={{span: 24}} md={{span: 24}} className='flex-row' style={{justifyContent: 'flex-end'}}>
+            <Row style={{ marginTop: 20 }}>
+                <Col xs={{ span: 24 }} md={{ span: 24 }} className='flex-row' style={{ justifyContent: 'flex-end' }}>
                     <Button disabled={blocks.length > 0 ? false : true} type='primary' className='flex-row' onClick={onClickAddNew} >
                         <i className='icon-add_circle_outlinecontrol_point' /> &nbsp;
                         Thêm mới
@@ -346,25 +346,25 @@ const Contracts = props => {
                     </Popconfirm>
                 </Col>
             </Row>
-            
+
             <Spin spinning={isShowLoadingTable} tip='Loading...'>
-                <Row style={{paddingTop: '10px'}}>
-                    <Table bordered size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={contracts} />
+                <Row style={{ paddingTop: '10px' }}>
+                    <Table bordered size='small' rowSelection={rowSelection} style={{ width: '100%' }} columns={columns} dataSource={contracts} />
                 </Row>
             </Spin>
             <ModalContract
                 isOpen={contractModal.isOpen}
                 blockSelected={blockSelected}
-                toggle={() => {setContractModal({...contractModal, isOpen: !contractModal.isOpen})}}
+                toggle={() => { setContractModal({ ...contractModal, isOpen: !contractModal.isOpen }) }}
                 callback={callbackModalContract}
-                contractEdited = {contractModal.contractEdited}
+                contractEdited={contractModal.contractEdited}
             />
         </div>
     );
 };
 
 Contracts.propTypes = {
-    
+
 };
 
 const mapDispatchToProps = {
