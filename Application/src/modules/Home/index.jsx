@@ -1,8 +1,8 @@
 // Libraries
-import React, {useEffect, useState} from 'react';
-import {motion} from 'framer-motion';
-import {Button, Input, Col, Row, Typography, Select, Divider, Popover, Spin} from 'antd';
-import {connect} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button, Input, Col, Row, Typography, Select, Divider, Popover, Spin } from 'antd';
+import { connect } from 'react-redux';
 import numeral from 'numeral';
 import * as Sentry from '@sentry/browser';
 import _ from 'lodash';
@@ -14,27 +14,27 @@ import ViewRoomModal from 'Src/modules/Home/containers/RoomsMotel/components/Vie
 import * as roomServices from 'Src/services/room';
 
 // Actions
-import {layout} from 'Layouts/actions';
+import { layout } from 'Layouts/actions';
 
 // Icon
-import {BankOutlined, UserOutlined, DollarCircleOutlined} from '@ant-design/icons';
-import {userLogin} from '../Layouts/actions';
+import { BankOutlined, UserOutlined, DollarCircleOutlined } from '@ant-design/icons';
+import { userLogin } from '../Layouts/actions';
 
-const {Title, Text} = Typography;
-const {Option} = Select;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 const PATH = 'Src/modules/Home/index.jsx';
 
-const  Home = (props) => {
+const Home = (props) => {
     // Props
-    const {blocks = []} = props;
+    const { blocks = [] } = props;
 
     const [rooms, setRooms] = useState([]);
     const [query, setQuery] = useState({
         status: -1,
         idBlock: ''
     });
-    const [stateBlocks, setStateBlocks] = useState([{id: -1, nameBlock: 'Tất cả'}]);
+    const [stateBlocks, setStateBlocks] = useState([{ id: -1, nameBlock: 'Tất cả' }]);
     const [isLoading, setIsLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -44,7 +44,7 @@ const  Home = (props) => {
         getDataRooms();
     }, [query]);
 
-    useEffect(() => {   
+    useEffect(() => {
         setStateBlocks(stateBlocks.concat(blocks));
     }, [blocks]);
 
@@ -60,7 +60,7 @@ const  Home = (props) => {
         }
     });
 
-    useEffect(()=>{
+    useEffect(() => {
         if (stateBlocks.length > 0) {
 
             // had block in list
@@ -68,7 +68,7 @@ const  Home = (props) => {
 
             if (localStorage.getItem('blockDashSelected') && isHaded) {
                 const defaultBlock = localStorage.getItem('blockDashSelected');
-    
+
                 setQuery({
                     ...query,
                     idBlock: +defaultBlock
@@ -82,7 +82,7 @@ const  Home = (props) => {
 
         }
 
-    },[stateBlocks]);
+    }, [stateBlocks]);
 
     const getDataRooms = async () => {
         setIsLoading(true);
@@ -95,7 +95,7 @@ const  Home = (props) => {
 
         if (getRooms) {
             if (getRooms.data && getRooms.data.data) {
-                const {rooms = []} = getRooms.data.data;
+                const { rooms = [] } = getRooms.data.data;
 
                 const newRooms = _.groupBy(rooms, room => room.status);
 
@@ -121,40 +121,40 @@ const  Home = (props) => {
 
                 return (
                     <React.Fragment key={room}>
-                        {newRooms.length > 0 ? <Divider orientation="left">{isEmty ? 'Còn trống' : 'Đã thuê'}</Divider> : null } 
-                        <Row gutter={16} style={{padding: '10px'}}>
-                            {newRooms.length > 0 ? 
+                        {newRooms.length > 0 ? <Divider orientation="left">{isEmty ? 'Còn trống' : 'Đã thuê'}</Divider> : null}
+                        <Row gutter={16} style={{ padding: '10px' }}>
+                            {newRooms.length > 0 ?
                                 newRooms.map(room => {
-                                    return <Col key = {room.id}className='flex-row box-room' onClick={() => onClickRoom(room)}>
-                                        <div className='status-room' style={{backgroundColor: isEmty ? '#13c2c2' : '#f5222d'}}>
+                                    return <Col key={room.id} className='flex-row box-room' onClick={() => onClickRoom(room)}>
+                                        <div className='status-room' style={{ backgroundColor: isEmty ? '#13c2c2' : '#f5222d' }}>
                                             <strong className='name-room'>{room.nameRoom}</strong>
-                                            <i style={{fontSize: 40}} className='icon-airline_seat_individual_suite' />
+                                            <i style={{ fontSize: 40 }} className='icon-airline_seat_individual_suite' />
                                             <div className='desc-room'>
-                                                <Row style={{width: '100%'}} >
+                                                <Row style={{ width: '100%' }} >
                                                     <Col span={4}><i className='icon-grouppeople' /></Col>
                                                     <Col span={20}>{room.maxPeople}</Col>
                                                 </Row>
-                                                <Row style={{width: '100%'}} >
+                                                <Row style={{ width: '100%' }} >
                                                     <Col span={4}><i className='icon-attach_money' /></Col>
                                                     <Col span={20}>{numeral(room.price).format('0,0')}</Col>
                                                 </Row>
                                             </div>
                                         </div>
                                     </Col>;
-                                })   : null
+                                }) : null
                             }
                         </Row>
                     </React.Fragment>
                 );
             });
         } else {
-            return <div style={{width: '100%', textAlign: 'center', fontSize: '20px', marginTop: 20}}>Khu trọ này không có phòng</div>;
+            return <div style={{ width: '100%', textAlign: 'center', fontSize: '20px', marginTop: 20 }}>Khu trọ này không có phòng</div>;
         }
     };
 
     const onChangeBlocks = (value) => {
-        localStorage.setItem('blockDashSelected',value);
-        
+        localStorage.setItem('blockDashSelected', value);
+
         setQuery({
             ...query,
             idBlock: value
@@ -169,7 +169,7 @@ const  Home = (props) => {
     };
 
     const onChangeSearch = (event) => {
-        const {value} = event.target;
+        const { value } = event.target;
 
         setSearch(value);
     };
@@ -183,7 +183,7 @@ const  Home = (props) => {
             if (hello) {
                 console.log(hello);
             }
-            
+
         } catch (error) {
             console.log(error);
 
@@ -196,33 +196,33 @@ const  Home = (props) => {
             <div className="site-card-wrapper">
                 <Button onClick={onClickTest}>Test Bug</Button>
                 <Row gutter={16}>
-                    <Col xs={{span: 24}} md={{span: 8}}>
-                        <div className='card-info flex-row' onClick={() => {this.props.history.push('/rooms-motel')}}>
-                            <BankOutlined style={{fontSize: 40, color: ''}} />
-                            <div style={{marginLeft: 10}} >
-                                <Title style={{color: '#53caa1'}} level={4} underline>Thông tin phòng</Title>
+                    <Col xs={{ span: 24 }} md={{ span: 8 }}>
+                        <div className='card-info flex-row' onClick={() => { this.props.history.push('/rooms-motel') }}>
+                            <BankOutlined style={{ fontSize: 40, color: '' }} />
+                            <div style={{ marginLeft: 10 }} >
+                                <Title style={{ color: '#53caa1' }} level={4} underline>Thông tin phòng</Title>
                                 <Text strong>Tổng số phòng: 30</Text> <br />
-                                <Text strong>Số phòng trống: 30</Text> <br />
-                                <Text strong>Số phòng đã thuê: 30</Text>
+                                <Text strong>Số phòng trống: 24</Text> <br />
+                                <Text strong>Số phòng đã thuê: 25</Text>
                             </div>
                         </div>
                     </Col>
-                    <Col xs={{span: 24}} md={{span: 8}}>
+                    <Col xs={{ span: 24 }} md={{ span: 8 }}>
                         <div className='card-info violet-my flex-row'>
-                            <UserOutlined style={{fontSize: 40, color: ''}} />
-                            <div style={{marginLeft: 10}}>
-                                <Title style={{color: '#dd22c7'}} level={4} underline>Người thuê</Title>
+                            <UserOutlined style={{ fontSize: 40, color: '' }} />
+                            <div style={{ marginLeft: 10 }}>
+                                <Title style={{ color: '#dd22c7' }} level={4} underline>Người thuê</Title>
                                 <Text strong>Tổng số người thuê: 30</Text> <br />
                                 <Text strong>Số phòng trống: 30</Text> <br />
                                 <Text strong>Số phòng đã thuê: 30</Text>
                             </div>
                         </div>
                     </Col>
-                    <Col xs={{span: 24}} md={{span: 8}}>
+                    <Col xs={{ span: 24 }} md={{ span: 8 }}>
                         <div className='card-info orange-my flex-row'>
-                            <DollarCircleOutlined style={{fontSize: 40, color: ''}} />
-                            <div style={{marginLeft: 10}}>
-                                <Title style={{color: '#dd7322'}} level={4} underline>Chi phí</Title>
+                            <DollarCircleOutlined style={{ fontSize: 40, color: '' }} />
+                            <div style={{ marginLeft: 10 }}>
+                                <Title style={{ color: '#dd7322' }} level={4} underline>Chi phí</Title>
                                 <Text strong>Tiền phòng: 3,000,000 vnd/1 tháng</Text> <br />
                                 <Text strong>Tiền nước: 70,000 vnd/1 tháng</Text> <br />
                                 <Text strong>Tiền mạng: 100,000 vnd/1 tháng</Text> {' '}...
@@ -232,10 +232,10 @@ const  Home = (props) => {
                 </Row>
             </div>
             <div className="main-content">
-                <Row style={{marginTop: '20px'}} >
-                    <Col xs={{span: 24}} md={{span: 6}} className='mb-5 flex-row'>
-                        <div className='mr-5 ml-5' style={{fontSize: 15, fontWeight: 600}}>Trạng thái: </div>
-                        <Select defaultValue={-1} style={{width: 200}} onChange={onChangeSelectStatus}>
+                <Row style={{ marginTop: '20px' }} >
+                    <Col xs={{ span: 24 }} md={{ span: 6 }} className='mb-5 flex-row'>
+                        <div className='mr-5 ml-5' style={{ fontSize: 15, fontWeight: 600 }}>Trạng thái: </div>
+                        <Select defaultValue={-1} style={{ width: 200 }} onChange={onChangeSelectStatus}>
                             <Option value={-1}>
                                 Tất cả
                             </Option>
@@ -247,12 +247,12 @@ const  Home = (props) => {
                             </Option>
                         </Select>
                     </Col>
-                    <Col xs={{span: 24}} md={{span: 6}} className='flex-row mb-5'>
-                        <div className='mr-5 ml-5' style={{fontSize: 15, fontWeight: 600}}>Khu trọ: </div>
+                    <Col xs={{ span: 24 }} md={{ span: 6 }} className='flex-row mb-5'>
+                        <div className='mr-5 ml-5' style={{ fontSize: 15, fontWeight: 600 }}>Khu trọ: </div>
                         <Select
                             showSearch
                             value={query.idBlock}
-                            style={{width: 200}}
+                            style={{ width: 200 }}
                             placeholder="Chọn khu trọ"
                             onChange={onChangeBlocks}
                             optionFilterProp="children"
@@ -261,18 +261,18 @@ const  Home = (props) => {
                             }
                         >
                             {
-                                stateBlocks.map(block =>(
+                                stateBlocks.map(block => (
                                     <Option key={block.id} value={block.id}>{block.nameBlock}</Option>
                                 ))
                             }
                         </Select>
                     </Col>
-                    <Col xs={{span: 24}} md={{span: 7}} className='flex-row mb-5'>
-                        <div className='mr-5 ml-5' style={{fontSize: 15, fontWeight: 600}}>Tìm kiếm theo tên: </div>
+                    <Col xs={{ span: 24 }} md={{ span: 7 }} className='flex-row mb-5'>
+                        <div className='mr-5 ml-5' style={{ fontSize: 15, fontWeight: 600 }}>Tìm kiếm theo tên: </div>
                         <Input.Search
                             onChange={onChangeSearch}
                             placeholder="Nhập tên phòng trọ"
-                            style={{width: 200}}
+                            style={{ width: 200 }}
                         />
                     </Col>
                 </Row>
@@ -285,11 +285,11 @@ const  Home = (props) => {
     );
 };
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
     return {
         blocks: state.Layouts.layoutReducer.blocks
     };
-} 
+}
 
 const mapDispatchToProps = {
     layout
