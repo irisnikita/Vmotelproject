@@ -391,7 +391,8 @@ const ModalContract = props => {
                             height: 300
                         }}
                         locale={{
-                            itemUnit: 'Khách hàng'
+                            itemUnit: 'Khách hàng',
+                            itemsUnit: 'Khách hàng'
                         }}
                         targetKeys={transfer.targetKeys}
                         selectedKeys={transfer.selectedKeys}

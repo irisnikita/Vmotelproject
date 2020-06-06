@@ -4,6 +4,7 @@ import {motion} from 'framer-motion';
 import {Button, Input, Col, Row, Typography, Select, Divider, Popover, Spin} from 'antd';
 import {connect} from 'react-redux';
 import numeral from 'numeral';
+import * as Sentry from '@sentry/browser';
 import _ from 'lodash';
 
 // Components
@@ -17,9 +18,12 @@ import {layout} from 'Layouts/actions';
 
 // Icon
 import {BankOutlined, UserOutlined, DollarCircleOutlined} from '@ant-design/icons';
+import {userLogin} from '../Layouts/actions';
 
 const {Title, Text} = Typography;
 const {Option} = Select;
+
+const PATH = 'Src/modules/Home/index.jsx';
 
 const  Home = (props) => {
     // Props
@@ -174,9 +178,23 @@ const  Home = (props) => {
         setIsOpenModal(!isOpenModal);
     };
 
+    const onClickTest = () => {
+        try {
+            if (hello) {
+                console.log(hello);
+            }
+            
+        } catch (error) {
+            console.log(error);
+
+            Sentry.captureException(error);
+        }
+    };
+
     return (
         <div className='home-content'>
             <div className="site-card-wrapper">
+                <Button onClick={onClickTest}>Test Bug</Button>
                 <Row gutter={16}>
                     <Col xs={{span: 24}} md={{span: 8}}>
                         <div className='card-info flex-row' onClick={() => {this.props.history.push('/rooms-motel')}}>

@@ -4,7 +4,7 @@ import {Layout, Button, Avatar, Menu, Divider, Popover, Dropdown} from 'antd';
 import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import _ from 'lodash';
-import motion from 'framer-motion';
+import {motion} from 'framer-motion';
 
 // Icon
 import {DingtalkOutlined, BarsOutlined} from '@ant-design/icons';
@@ -16,6 +16,19 @@ import {layout} from 'Layouts/actions';
 import DrawerUser from './components/DrawerUser';
 
 const {SubMenu} = Menu;
+
+const icon = {
+    hidden: {
+        opacity: 0,
+        pathLength: 0,
+        fill: 'rgba(255, 255, 255, 0)'
+    },
+    visible: {
+        opacity: 1,
+        pathLength: 1,
+        fill: 'rgba(255, 255, 255, 1)'
+    }
+};
 
 const menu = [
     {
@@ -183,13 +196,22 @@ class DefaultHeader extends Component {
             >
                 <div className='flex-row' style={{marginLeft: '20px'}}>
                     <div className='flex-row logo-header'>
-                        <DingtalkOutlined 
-                            style={{
-                                fontSize: 40,
-                                color: 'black',
-                                paddingRight: '5px',
-                                borderRight: '3px solid #fff'
-                            }} /> 
+                        <motion.svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 100 100"
+                            className="item"
+                            variants={icon}
+                        >
+                            <motion.path
+                                d="M0 100V0l50 50 50-50v100L75 75l-25 25-25-25z"
+                                initial="hidden"
+                                animate="visible"
+                                transition={{
+                                    default: {duration: 2, ease: 'easeInOut'},
+                                    fill: {duration: 2, ease: [1, 0, 0.8, 1]}
+                                }}
+                            />
+                        </motion.svg>
                         <div className='title-header'>Vmotel </div>
                         <Divider type='vertical' />
                     </div>
@@ -210,35 +232,34 @@ class DefaultHeader extends Component {
                     
                     {
                         !_.isEmpty(userLogin) ? <div className='flex-row'>
+                            
                             <div style={{fontSize: 15, fontWeight: 600}}>
                                 {userLogin.userName}
                             </div>
-                            <Popover placement='bottomRight' content={
-                                <div className='list-menu-user'>
-                                    <div className='item-user'>
-                                        <i className='icon-person' style={{marginRight: 5}} />
+                            <Dropdown overlay={<Menu>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-person' style={{marginRight: 5}} />
                                         Thông tin cá nhân
-                                    </div>
-                                    <div className='item-user'>
-                                        <i className='icon-settings' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-settings' style={{marginRight: 5}} />
                                         Cấu hình chung
-                                    </div>
-                                    <div  className='item-user'>
-                                        <i className='icon-reorder' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item  className='item-user'>
+                                    <i className='icon-reorder' style={{marginRight: 5}} />
                                         Danh sách dịch vụ
-                                    </div>
-                                    <div className='item-user'>
-                                        <i className='icon-build' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user'>
+                                    <i className='icon-build' style={{marginRight: 5}} />
                                         Công thức
-                                    </div>
-                                    <div className='item-user' onClick={this.onClickLogout}>
-                                        <i className='icon-exit_to_app' style={{marginRight: 5}} />
+                                </Menu.Item>
+                                <Menu.Item className='item-user' onClick={this.onClickLogout}>
+                                    <i className='icon-exit_to_app' style={{marginRight: 5}} />
                                         Đăng xuất
-                                    </div>
-                                </div>
-                            }>
+                                </Menu.Item>
+                            </Menu>}>
                                 <Avatar  size='large' style={{marginLeft: 10, cursor: 'pointer'}} src='https://nguoinoitieng.tv/images/nnt/96/0/bber.jpg' />
-                            </Popover>
+                            </Dropdown>
                         </div> : 
                             <>
                                 <div className='flex-row menu-header'>
