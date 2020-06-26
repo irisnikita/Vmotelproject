@@ -428,6 +428,7 @@ const RoomsMotel = props => {
                     </Popconfirm>
                 </Col>
             </Row>
+            <img src="" alt="" srcset=""/>
             <Spin spinning={isShowLoadingTable} tip='Loading...'>
                 <Row style={{paddingTop: '10px'}}>
                     <Table bordered size='small' rowSelection={rowSelection} style={{width: '100%'}} columns={columns} dataSource={rooms} />

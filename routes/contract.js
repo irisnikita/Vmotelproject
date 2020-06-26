@@ -22,7 +22,7 @@ const contractRouter = (app) => {
                     let pendding = contracts.length;
 
                     contracts.forEach((contract) => {
-                        let query = 'SELECT idUser FROM USER_ROOM WHERE idRoom = ?';
+                        let query = 'SELECT idUser FROM user_room WHERE idRoom = ?';
                         connection.query(query, [contract.idRoom], (err, idUsers) => {
                             const newIdUsers = JSON.parse(JSON.stringify(idUsers)).map(idUser => (+`${idUser.idUser}`))
                             if (!err) {

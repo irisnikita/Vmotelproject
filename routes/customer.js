@@ -20,7 +20,7 @@ const customRouter = (app) => {
                     let pending = rows.length;
 
                     rows.forEach(row => {
-                        let query = 'SELECT R.nameRoom FROM USER_ROOM UR INNER JOIN ROOMS R ON UR.idRoom = R.id WHERE idUser = ? ';
+                        let query = 'SELECT R.nameRoom FROM user_room UR INNER JOIN rooms R ON UR.idRoom = R.id WHERE idUser = ? ';
 
                         connection.query(query, [row.id], (err, userRoom) => {
                             if (!err) {

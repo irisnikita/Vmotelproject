@@ -8,6 +8,7 @@ const userModel = require('../model/user');
 const jwtHelper = require('../helpers/jwt.helper');
 const bcrypt = require('bcrypt');
 const { mailRegisterSucces } = require('../node_mailer');
+const { verifyToken } = require('../helpers/jwt.helper');
 
 // AppConfig
 const appConfig = require('../constant');
@@ -36,7 +37,10 @@ const userRoute = (app) => {
                                         id: user.id,
                                         userName: user.userName,
                                         fullName: user.fullName,
-                                        role: user.role
+                                        role: user.role,
+                                        avatar: user.avatar || '',
+                                        email: user.email,
+                                        phoneNumber: user.phoneNumber
                                     }
                                 }
                             })
@@ -87,8 +91,6 @@ const userRoute = (app) => {
 
     userRouters.post('/send-mail', EmailController.sendMail);
 
-    userRouters.use(AuthMiddleWare.isAuth);
-
     userRouters.get('/get-user/:id?', (req, res) => {
         const { id } = req.params;
         if (!id) {
@@ -129,14 +131,29 @@ const userRoute = (app) => {
         }
     })
 
-    userRouters.post('/validate', (req, res) => {
-        res.send({
-            status: res.statusCode,
-            message: 'Validate success',
-            data: {
-                status: 1
-            }
-        })
+    userRouters.use(AuthMiddleWare.isAuth);
+
+    userRouters.post('/validate', async (req, res) => {
+        const { token } = req.query;
+
+        const data = await verifyToken(token, appConfig.ACCESS_TOKEN_SECERET);
+
+        if (data.data) {
+            res.send({
+                status: res.statusCode,
+                message: 'Validate success',
+                data: {
+                    user: data.data,
+                    status: 1
+                }
+            })
+        } else {
+            res.send({
+                message: 'Failed token'
+            })
+        }
+
+
     })
 
     userRouters.get('/friends', FriendController.friendLists);

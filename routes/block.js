@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const blockRouter = (app) => {
 
 
-    blockRouters.use(AuthMiddleWare.isAuth);
+	//blockRouters.use(AuthMiddleWare.isAuth);
 
     blockRouters.post('/create', (req, res) => {
         blockModel.create(req, (err, rows) => {

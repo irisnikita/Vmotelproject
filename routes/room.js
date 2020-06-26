@@ -9,7 +9,7 @@ const roomImageModel = require('../model/roomImage');
 
 const roomRouter = (app) => {
 
-    roomRouters.use(authMiddleware.isAuth)
+	roomRouters.use(authMiddleware.isAuth)
 
     roomRouters.get('/get-rooms/:id?', (req, res) => {
         const { isMatch = false, type = '' } = req.query;

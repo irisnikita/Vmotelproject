@@ -27,12 +27,12 @@ let isAuth = async (req, res, next) => {
 
         } catch (error) {
 
-            return res.status(401).json({
+            return res.json({
                 message: 'Unauthorized.'
             })
         }
     } else {
-        return res.status(403).send({
+        return res.send({
             message: 'No token provided'
         })
     }
