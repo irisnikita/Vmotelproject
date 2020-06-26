@@ -16,8 +16,8 @@ const Contract = {
             note = "",
         } = req.body;
         let query =
-            "INSERT INTO CONTRACTS (idRoom, idOwner, idSlave, startDate, endDate, circlePay, deposit, dayPay, note, idBlock) VALUES (?)";
-        let query2 = "INSERT INTO USER_ROOM (idUser, idRoom) VALUES ?";
+            "INSERT INTO contracts (idRoom, idOwner, idSlave, startDate, endDate, circlePay, deposit, dayPay, note, idBlock) VALUES (?)";
+        let query2 = "INSERT INTO user_room (idUser, idRoom) VALUES ?";
 
         return connection.beginTransaction((err) => {
             if (err) {
@@ -73,7 +73,7 @@ const Contract = {
     },
     createUserRoom: (req, callback) => {
         const { userRooms } = req.body;
-        let query = "INSERT INTO USER_ROOM (idUser, idRoom) VALUES ?";
+        let query = "INSERT INTO user_room (idUser, idRoom) VALUES ?";
         return connection.query(
             query,
             [userRooms.map((userRoom) => [userRoom.idUser, userRoom.idRoom])],
@@ -83,19 +83,19 @@ const Contract = {
     getAll: (req, callback) => {
         const { idBlock = "" } = req.query;
         let query =
-            "SELECT C.*, R.nameRoom, CU.fullName FROM CONTRACTS C INNER JOIN ROOMS R ON C.idRoom = R.id INNER JOIN CUSTOMERS CU ON C.idSlave = CU.id WHERE C.idBlock = ? ";
+            "SELECT C.*, R.nameRoom, CU.fullName FROM contracts C INNER JOIN rooms R ON C.idRoom = R.id INNER JOIN customers CU ON C.idSlave = CU.id WHERE C.idBlock = ? ";
         return connection.query(query, [idBlock], callback);
     },
     delete: (req, callback) => {
         const { id = "" } = req.params;
-        let query = "DELETE FROM CONTRACTS WHERE id = ?";
+        let query = "DELETE FROM contracts WHERE id = ?";
 
         return connection.query(query, [id], callback);
     },
     deleteAll: (req, callback) => {
         const { contractsId } = req.body;
 
-        let query = "DELETE FROM CONTRACTS WHERE id IN (?)";
+        let query = "DELETE FROM contracts WHERE id IN (?)";
 
         return connection.query(query, [contractsId], callback);
     },
@@ -113,9 +113,9 @@ const Contract = {
         } = req.body;
         const { id = "" } = req.params;
         let query =
-            "UPDATE CONTRACTS SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?";
-        let query2 = 'DELETE FROM USER_ROOM WHERE idRoom = ?';
-        let query3 = 'INSERT INTO USER_ROOM (idUser, idRoom) VALUES ?'
+            "UPDATE contracts SET idSlave = ?, startDate = ?, endDate = ?, circlePay = ?, deposit = ?, dayPay = ?, note = ? WHERE id = ?";
+        let query2 = 'DELETE FROM user_room WHERE idRoom = ?';
+        let query3 = 'INSERT INTO user_room (idUser, idRoom) VALUES ?'
 
         return connection.beginTransaction((err) => {
             if (err) {

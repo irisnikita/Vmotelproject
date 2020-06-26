@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 const Customer = {
     login: (req, callback) => {
-        let query = "SELECT * FROM USERS WHERE userName = ?";
+        let query = "SELECT * FROM users WHERE userName = ?";
         return connection.query(query, [req.body.userName], callback);
     },
     register: (req, callback) => {
@@ -20,7 +20,7 @@ const Customer = {
         } = body;
 
         let query =
-            "INSERT INTO USERS (fullName, sex, userName, email, province, address, pass, role) VALUES (?,?,?,?,?,?,?,?)";
+            "INSERT INTO users (fullName, sex, userName, email, province, address, pass, role) VALUES (?,?,?,?,?,?,?,?)";
         const hashPass = bcrypt.hashSync(pass, 10);
 
         return connection.query(
@@ -49,7 +49,7 @@ const Customer = {
         const { userId } = req.query;
 
         let query =
-            "INSERT INTO CUSTOMERS (codeUser, fullName, identifyFront, identifyBack, dateBirth, address, sex, job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note) VALUES (?)";
+            "INSERT INTO customers (codeUser, fullName, identifyFront, identifyBack, dateBirth, address, sex, job, workPlace, tempReg, email, avatar, phoneNumber, idOwner, note) VALUES (?)";
         return connection.query(
             query,
             [
@@ -78,23 +78,23 @@ const Customer = {
         const { userId } = req.query;
 
         let query =
-            "SELECT * FROM CUSTOMERS WHERE idOwner = ?";
+            "SELECT * FROM customers WHERE idOwner = ?";
         return connection.query(query, [userId], callback);
     },
     get: (id, callback) => {
-        let query = "SELECT * FROM USERS WHERE id = ?";
+        let query = "SELECT * FROM users WHERE id = ?";
         return connection.query(query, [id], callback);
     },
     delete: (req, callback) => {
         const { id = "" } = req.params;
-        let query = "DELETE FROM CUSTOMERS WHERE id = ?";
+        let query = "DELETE FROM customers WHERE id = ?";
 
         return connection.query(query, [id], callback);
     },
     deleteAll: (req, callback) => {
         const { customersId } = req.body;
 
-        let query = "DELETE FROM CUSTOMERS WHERE id IN (?)";
+        let query = "DELETE FROM customers WHERE id IN (?)";
 
         return connection.query(query, [customersId], callback);
     },
@@ -117,7 +117,7 @@ const Customer = {
         } = req.body;
         const { id = "" } = req.params;
         let query =
-            "UPDATE CUSTOMERS SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?";
+            "UPDATE customers SET fullName = ?, identifyFront = ?, identifyBack = ?, dateBirth = ?, address = ?, sex = ?, job = ?, workPlace = ?, tempReg = ?, email = ?, avatar = ?, phoneNumber = ?, note = ? WHERE id = ?";
 
         return connection.query(
             query,

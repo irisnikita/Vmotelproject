@@ -16,18 +16,21 @@ let generateToken = (user, secretSignature, tokenLife) => {
         const userData = {
             id: user.id,
             userName: user.userName,
-            fullName: user.fullName
+            fullName: user.fullName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            avatar: user.avatar,
         }
         // create token
         jwt.sign(
-            {data: userData},
+            { data: userData },
             secretSignature,
             {
                 algorithm: "HS256",
                 expiresIn: tokenLife
             },
             (error, token) => {
-                if(error) {
+                if (error) {
                     return reject(error);
                 }
                 resolve(token)
@@ -44,7 +47,7 @@ let generateToken = (user, secretSignature, tokenLife) => {
 let verifyToken = (token, secretKey) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, secretKey, (error, decoded) => {
-            if(error) {
+            if (error) {
                 return reject(error);
             }
             resolve(decoded)

@@ -1,11 +1,11 @@
 // Libraries
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Table, Row, Col, Typography, Tooltip, Spin, Input, Popconfirm, message, Select, Avatar } from 'antd';
-import { connect } from 'react-redux';
+import {Button, Table, Row, Col, Typography, Tooltip, Spin, Input, Popconfirm, message, Select, Avatargit } from 'antd';
+import {connect} from 'react-redux';
 import Highlighter from 'react-highlight-words';
 import numeral from 'numeral';
-import { SearchOutlined } from '@ant-design/icons';
+import {SearchOutlined} from '@ant-design/icons';
 
 // Actions
 import { layout } from 'Layouts/actions';
@@ -21,8 +21,8 @@ import moment from 'moment';
 import { capitalize, convertChar } from 'Src/utils';
 
 // Antd
-const { Title } = Typography;
-const { Option } = Select;
+const {Title} = Typography;
+const {Option} = Select;
 
 const Contracts = props => {
     // Props
