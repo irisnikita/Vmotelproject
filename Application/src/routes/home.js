@@ -7,7 +7,7 @@ const RoomsMotel = React.lazy(() => import('Src/modules/Home/containers/RoomsMot
 const Services = React.lazy(() => import('Src/modules/Home/containers/Services'));
 const Customers = React.lazy(() => import('Src/modules/Home/containers/Customers'));
 const Contracts = React.lazy(() => import('Src/modules/Home/containers/Contracts'));
-const Bill = React.lazy(() => import('Src/modules/Home/containers/Bill'));
+const Bills = React.lazy(() => import('Src/modules/Home/containers/Bills'));
 
 export default [
     {
@@ -63,10 +63,10 @@ export default [
         component: Contracts
     },
     {
-        state: 'bill',
-        path: '/bill',
+        state: 'bills',
+        path: '/bills',
         exact: true,
-        name: 'Bill',
-        component: Bill
+        name: 'Bills',
+        component: Bills
     }
 ];

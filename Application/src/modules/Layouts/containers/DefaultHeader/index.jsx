@@ -46,7 +46,7 @@ const menu = [
         icon: 'icon-attach_money'
     },
     {
-        key: 'bill',
+        key: 'bills',
         label: 'Hóa đơn',
         icon: 'icon-money'
     },
